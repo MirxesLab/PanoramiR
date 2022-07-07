@@ -1,0 +1,13 @@
+---
+title: "PanoramiR Analysis Report"
+author: "MiRXES Lab"
+date: "`r Sys.Date()`"
+output:
+  bookdown::html_document2:
+    theme: paper
+    toc: true
+    number_section: true
+    fig_caption: true
+---
+
+
