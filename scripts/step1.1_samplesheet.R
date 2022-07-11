@@ -5,6 +5,9 @@
     # file.samplesheet
 # output:
     # df.samplesheet
+    # comparisons
+    # title.compare
+    # ls.compare.group
 # =========================================================================== #
 
 # Read in sample sheet
@@ -44,7 +47,10 @@ title.compare <- sapply(comparisons,
 ls.compare.group <- list()
 
 for (i in 1:sum(n.comp.group)) {
-    ls.compare.group[[i]] <- df.samplesheet[,c(1,(1+i))]    
+    df.tmp = df.samplesheet[,c(1,(1+i))] 
+    df.tmp = df.tmp %>%
+        dplyr::filter(!is.na(df.tmp[2]))
+    ls.compare.group[[i]] <- df.tmp    
 }
 
 names(ls.compare.group) <- title.compare[1:sum(n.comp.group)]
