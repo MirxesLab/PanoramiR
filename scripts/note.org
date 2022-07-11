@@ -1,0 +1,8 @@
+* Workflow [only for PanoramiR]
+- Merge result files -> [miRNA, sample 1, sample 2, ... sample n]
+- Spike-in Normalization
+- Global normalization / ref miRNA normalization
+- Difference Expression Analysis
+- Visualization
+
+* TODO add *knowledge* panel part later
