@@ -47,7 +47,7 @@ cutoff.sp      = 32          # The second round filter, for spike-in normalizati
 
 threshold.impute    = 0.1    # No more than 10% missing value in miRNA
 threshold.DE.pvalue = 0.05   # The p value of T test
-threshold.DE.log2fc = 1      # The log2 fold change of geometric mean
+threshold.DE.dCt    = 1      # The log2 fold change of geometric mean
 
 
 # Set Color
@@ -56,8 +56,8 @@ col.compare.2 = brewer.pal(6, "Dark2")[3:4] # Purple - Pink
 col.compare.3 = brewer.pal(6, "Dark2")[5:6] # Green - Yellow
 col.others = brewer.pal(11,'RdYlBu')[c(1, 11)] # Red - Blue
 col.grey   = brewer.pal(8, "Set2")[8] # grey
-
-
+col.heatmap = brewer.pal(11, 'PRGn')[c(1, 11)] # Purple - Green
+col.heatmap = c(col.heatmap[1], "#FFFFFF", col.heatmap[2])
 
 
 
