@@ -1,8 +1,8 @@
 # =========================================================================== #
-# Step 3 Global Normalization
+# Step 4 Global Normalization
 # --------------------------------------------------------------------------- #
 # Input:
-    # df.input.data.noNA [row: 376 miRNA, column: miRNA, 1, 2, ...]
+    # df.input.data.noNA [Step 3][row: 376 miRNA, column: miRNA, 1, 2, ...]
     
 # Output:
     # df.input.data.GlobalNorm [row: 376 miRNA, column: miRNA, 1, 2, ...]
