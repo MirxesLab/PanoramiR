@@ -18,8 +18,14 @@ dir.top     = '/Users/plateau/Documents/GitHub/PanoramiR'
 dir.out.fig = 'output/figures'
 dir.out.tbl = 'output/tables'
 
+# Set working directory
 setwd(dir.top)
 
+# Create directory for output
+dir.create(dir.out.fig, recursive = TRUE, showWarnings = FALSE)
+dir.create(dir.out.tbl, recursive = TRUE, showWarnings = FALSE)
+
+# Set file path
 file.input.data  = file.path('input', 
                              grep('*_Results.xlsx', 
                                   list.files('input', all.files = FALSE), 
@@ -30,10 +36,6 @@ file.ref.miRsp   = 'resources/miRSpike.xlsx'        # Spike-in miRNA: Position, 
 file.ref.miRthld = 'resources/miRThreshold.xlsx'    # Only for PanoramiR: miRNA, Threshold
 file.ref.RNAvol  = 'resources/RNAvolume.xlsx'
 
-# Create directory for output
-dir.create(dir.out.fig, recursive = TRUE, showWarnings = FALSE)
-dir.create(dir.out.tbl, recursive = TRUE, showWarnings = FALSE)
-
 # Set parameters
 is.basic       = TRUE        # Basic worflow execute Global Normalization. Non-basic workflow also execute normalization based on stable miRNA
 is.RTsp        = FALSE       # If the spike-in is Reverse Transcript Spike-in
@@ -43,8 +45,10 @@ cutoff.max     = 33          # The first round filter, before normalization
 cutoff.min     = 5
 cutoff.sp      = 32          # The second round filter, for spike-in normalization
 
+threshold.impute    = 0.1    # No more than 10% missing value in miRNA
 threshold.DE.pvalue = 0.05   # The p value of T test
 threshold.DE.log2fc = 1      # The log2 fold change of geometric mean
+
 
 # Set Color
 col.compare.1 = brewer.pal(6, "Dark2")[1:2] # Green - Orange
