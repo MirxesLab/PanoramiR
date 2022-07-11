@@ -2,7 +2,7 @@
 # Step 3 Impute Missing Value (<= 10%, analyze, NA = minimum)
 # --------------------------------------------------------------------------- #
 # Input: 
-    # df.input.data.SPnorm
+    # df.input.data.SPnorm     [Step 2]
 
 # Params:
     # threshold.impute    = 0.1
