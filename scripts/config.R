@@ -7,6 +7,7 @@ library(dplyr)
 library(readxl)
 library(stringi)
 library(stringr)
+library(pheatmap)
 library(RColorBrewer)
 library(ggplot2)
 library(plotly)
@@ -31,6 +32,7 @@ file.input.data  = file.path('input',
                                   list.files('input', all.files = FALSE), 
                                   value = TRUE))    #[*.Results.xlsx]
 file.samplesheet = 'input/Sample Manifest Form.xlsx'
+png.workflow     = 'resources/workflow.png'
 file.ref.miRList = 'resources/miRList.xlsx'         # All miRNA: Group, Position, miRBASE v22 Accession, miRNAID
 file.ref.miRsp   = 'resources/miRSpike.xlsx'        # Spike-in miRNA: Position, miRNA ID, SP, Group
 file.ref.miRthld = 'resources/miRThreshold.xlsx'    # Only for PanoramiR: miRNA, Threshold
