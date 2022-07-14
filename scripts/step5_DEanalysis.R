@@ -12,8 +12,8 @@
         # groupA     = df.miRNA.A [miRNA, samples]
         # groupB     = df.miRNA.B [miRNA, samples]
         # res.ori    = df.res.ori 
-        # res.order  = df.res.order  [Save]
-        # res.filter = df.res.filter [Save]
+        # res.order  = df.res.order  [Save] [Ordered by p value]
+        # res.filter = df.res.filter [Save] 
 
     # fun.plot.dCt(ls.diff, comp) # based on pvalue
     # fun.plot.scatter(ls.diff, comp) # based on dCt
@@ -59,9 +59,9 @@ fun.DEanalysis = function(comp) {
         dplyr::select(miRNA, mean.A, sd.A, mean.B, sd.B, dCt, pvalue)
     rownames(df.res.order) = NULL
     
-    # Filter based on pvalue
+    # Filter based on p value and dCt
     df.res.filter = df.res.ori %>%
-        dplyr::filter(pvalue <= threshold.DE.pvalue) %>%
+        dplyr::filter(pvalue <= threshold.DE.pvalue & abs.dCt >= threshold.DE.dCt) %>%
         dplyr::select(miRNA, mean.A, sd.A, mean.B, sd.B, dCt, pvalue)
     df.res.filter = df.res.filter[order(df.res.filter$pvalue, 
                                         decreasing = FALSE), ]
@@ -82,9 +82,10 @@ cols.DE = c("up" = col.others[1], "down" = col.others[2], "ns" = col.grey)
 
 ## bar plot of dCt: filter based on pvalue
 fun.plot.dCt    = function(ls.diff, comp) {
-    df.res.filter = ls.diff$res.filter
+    df.res.order = ls.diff$res.order
     
-    df.tmp = df.res.filter %>%
+    df.tmp = df.res.order %>%
+        dplyr::filter(pvalue <= threshold.DE.pvalue ) %>%
         dplyr::mutate(type = case_when(dCt >= threshold.DE.dCt ~ 'sig.up',
                                        dCt <= -threshold.DE.dCt ~ 'sig.down',
                                        TRUE ~ 'ns'))
