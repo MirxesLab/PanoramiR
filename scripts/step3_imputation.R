@@ -35,13 +35,13 @@ names(num.noNA) = df.input.data.SPnorm$miRNA
 num.noNA = num.noNA[order(num.noNA, decreasing = TRUE)]
 df.num.noNA = data.frame(miRNA = factor(names(num.noNA), levels = names(num.noNA)),
                          nonMissing = num.noNA,
-                         status = ifelse(num.noNA >= num.sample* (1 - threshold.impute),'analyze', 'not analyze'))
+                         status = ifelse(num.noNA >= num.sample* (1 - threshold.impute),'include', 'exclude'))
 p.num.noNA = ggplot(df.num.noNA,
                     aes(x = miRNA, 
                         y = nonMissing,
                         fill = status)) +
     geom_col(width = 1) +
-    scale_fill_manual(values = c(col.others[2], col.grey)) +
+    scale_fill_manual(values = c(col.grey, col.others[2])) +
     theme_classic() +
     theme(axis.text.x = element_blank()) +
     ggtitle('Number of non-missing values of miRNA across samples') +
