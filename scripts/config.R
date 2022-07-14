@@ -13,6 +13,10 @@ library(ggplot2)
 library(plotly)
 library(knitr)
 library(kableExtra)
+library(topGO)
+library(Gmisc)
+library(glue)
+library(grid)
 
 # Set Path
 dir.top     = '/Users/plateau/Documents/GitHub/PanoramiR'
@@ -37,6 +41,7 @@ file.ref.miRList = 'resources/miRList.xlsx'         # All miRNA: Group, Position
 file.ref.miRsp   = 'resources/miRSpike.xlsx'        # Spike-in miRNA: Position, miRNA ID, SP, Group
 file.ref.miRthld = 'resources/miRThreshold.xlsx'    # Only for PanoramiR: miRNA, Threshold
 file.ref.RNAvol  = 'resources/RNAvolume.xlsx'
+file.ref.target  = 'resources/Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt' # Will be changed into miTarBase data
 
 # Set parameters
 is.basic       = TRUE        # Basic worflow execute Global Normalization. Non-basic workflow also execute normalization based on stable miRNA
@@ -50,6 +55,8 @@ cutoff.sp      = 32          # The second round filter, for spike-in normalizati
 threshold.impute    = 0.1    # No more than 10% missing value in miRNA
 threshold.DE.pvalue = 0.05   # The p value of T test
 threshold.DE.dCt    = 1      # The log2 fold change of geometric mean
+threshold.GO.pvalue = 0.01
+GO.nodesize         = 10
 
 
 # Set Color
