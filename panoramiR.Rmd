@@ -11,7 +11,7 @@ output:
 ---
 ```{r echo = FALSE, warning= FALSE, message = FALSE}
 # Preparation
-source('scripts/config.R')           # Problem: cannot change the work directory in config.R
+source('scripts/config.R')           
 source('scripts/step1_preprocess.R') # Merge result files & First round filtering
 source('scripts/step1.1_samplesheet.R') # Read in Samplesheet
 ```
@@ -317,4 +317,181 @@ if ('Comparison 3' %in% comparisons) {
 }
 ```
 
+# Gene Target Analysis
 
+## Genes Targeted by Selected miRNA {.tabset .tabset-pills}
+miRNAs found differentially expressed between the sample groups (fold change \>= `r threshold.DE.dCt` and p-value =\< `r threshold.DE.pvalue`) are subjected to gene target analysis using mirTarBase ^[ H.-Y. Huang, Y.-C.-D. Lin, J. Li, K.-Y. Huang, S. Shrestha, H.-C. Hong, et al.]. A subset of the gene targets is shown below.
+
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+source('scripts/step6_targetgene.R')
+```
+
+### `r if('Comparison 1' %in% comparisons) {title.compare[1]}` {.unnumbered}
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 1' %in% comparisons) {
+    ls.miRNA2gene.1 = fun.targetGene(ls.diff.1)
+    if(length(ls.miRNA2gene.1) == 1) {
+        description = "Sorry, target genes cannot be found by selected miRNA"
+    } else {
+        description = ""
+        kbl(ls.miRNA2gene.1$miRNA2gene.show,
+            caption = "Gene targets of the selected miRNA in Comparison 1") %>%
+            kable_classic(full_width = T, html_font = 'Cambria') %>%
+            scroll_box(width = "100%", height = "250px")
+    }
+} else {description = ''}
+```
+`r description`
+
+### `r if('Comparison 2' %in% comparisons) {title.compare[2]}` {.unnumbered}
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 2' %in% comparisons) {
+    ls.miRNA2gene.2 = fun.targetGene(ls.diff.2)
+    if(length(ls.miRNA2gene.2) == 1) {
+        description = "Sorry, target genes cannot be found by selected miRNA"
+    } else {
+        description = ""
+        kbl(ls.miRNA2gene.2$miRNA2gene.show,
+            caption = "Gene targets of the selected miRNA in Comparison 2") %>%
+            kable_classic(full_width = T, html_font = 'Cambria') %>%
+            scroll_box(width = "100%", height = "250px")
+    }
+} else {description = ''}
+```
+`r description`
+
+### `r if('Comparison 3' %in% comparisons) {title.compare[3]}` {.unnumbered}
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 3' %in% comparisons) {
+    ls.miRNA2gene.3 = fun.targetGene(ls.diff.3)
+    if(length(ls.miRNA2gene.3) == 1) {
+        description = "Sorry, target genes cannot be found by selected miRNA"
+    } else {
+        description = ""
+        kbl(ls.miRNA2gene.3$miRNA2gene.show,
+            caption = "Gene targets of the selected miRNA in Comparison 3") %>%
+            kable_classic(full_width = T, html_font = 'Cambria') %>%
+            scroll_box(width = "100%", height = "250px")
+    }
+} else {description = ''}
+```
+`r description`
+
+
+## GO Enrichment Analysis {.tabset .tabset-pills}
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+source('scripts/step7_go.R')
+```
+
+
+### `r if('Comparison 1' %in% comparisons) {title.compare[1]}` {.unnumbered}
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 1' %in% comparisons) {
+    if(length(ls.miRNA2gene.1) == 1) {
+        description = "Sorry, GO enrichment is not applicable."
+        ls.GOsum.1 = NA
+    } else {
+        ls.GOsum.1 = fun.GOsum(ls.miRNA2gene.1)
+        if (length(ls.GOsum.1) == 1 ) {
+            description = "Sorry, there was no significantly enriched GO hits."
+        } else {
+            description = ''
+            kbl(ls.GOsum.1$res.show,
+                caption = "GO terms hit by target genes in Comparison 1") %>%
+                kable_classic(full_width = T, html_font = 'Cambria') %>%
+                scroll_box(width = "100%", height = "250px")
+        }
+    }
+} else {description = ''}
+```
+`r description`
+
+### `r if('Comparison 2' %in% comparisons) {title.compare[2]}` {.unnumbered}
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 2' %in% comparisons) {
+    if(length(ls.miRNA2gene.2) == 1) {
+        description = "Sorry, GO enrichment is not applicable."
+        ls.GOsum.2 = NA
+    } else {
+        ls.GOsum.2 = fun.GOsum(ls.miRNA2gene.2)
+        if (length(ls.GOsum.2) == 1 ) {
+            description = "Sorry, there was no significantly enriched GO hits."
+        } else {
+            description = ''
+            kbl(ls.GOsum.2$res.show,
+                caption = "GO terms hit by target genes in Comparison 2") %>%
+                kable_classic(full_width = T, html_font = 'Cambria') %>%
+                scroll_box(width = "100%", height = "250px")
+        }
+    }
+} else {description = ''}
+```
+`r description`
+
+
+### `r if('Comparison 3' %in% comparisons) {title.compare[3]}` {.unnumbered}
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 3' %in% comparisons) {
+    if(length(ls.miRNA2gene.3) == 1) {
+        description = "Sorry, GO enrichment is not applicable."
+        ls.GOsum.3 = NA
+    } else {
+        ls.GOsum.3 = fun.GOsum(ls.miRNA2gene.3)
+        if (length(ls.GOsum.3) == 1 ) {
+            description = "Sorry, there was no significantly enriched GO hits."
+        } else {
+            description = ''
+            kbl(ls.GOsum.3$res.show,
+                caption = "GO terms hit by target genes in Comparison 3") %>%
+                kable_classic(full_width = T, html_font = 'Cambria') %>%
+                scroll_box(width = "100%", height = "250px")
+        }
+    }
+} else {description = ''}
+```
+`r description`
+
+# Results Summary {.tabset .tabset-pills}
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+source('scripts/step8_ResSummary.R')
+```
+
+## `r if('Comparison 1' %in% comparisons) {title.compare[1]}` {.unnumbered}
+```{r echo = FALSE, message=FALSE, warning=FALSE, results='hide'}
+if('Comparison 1' %in% comparisons) {
+    fun.plot.summary(ls.diff.1, ls.miRNA2gene.1, ls.GOsum.1, 'Comparison 1')
+}
+```
+
+```{r echo = FALSE, fig.align='center', fig.cap='Result Summary for Comparison 1', out.width='80%'}
+if('Comparison 1' %in% comparisons){
+knitr::include_graphics(file.path(dir.out.fig, 'ResSum_Comparison 1.png'))
+}
+```
+
+## `r if('Comparison 2' %in% comparisons) {title.compare[2]}` {.unnumbered}
+```{r echo = FALSE, message=FALSE, warning=FALSE, results='hide'}
+if('Comparison 2' %in% comparisons) {
+    fun.plot.summary(ls.diff.2, ls.miRNA2gene.2, ls.GOsum.2, 'Comparison 2')
+}
+```
+
+```{r echo = FALSE, fig.align='center', fig.cap='Result Summary for Comparison 2', out.width='80%'}
+if('Comparison 2' %in% comparisons){
+knitr::include_graphics(file.path(dir.out.fig, 'ResSum_Comparison 2.png'))
+}
+```
+
+
+## `r if('Comparison 3' %in% comparisons) {title.compare[3]}` {.unnumbered}
+```{r echo = FALSE, message=FALSE, warning=FALSE, results='hide'}
+if('Comparison 3' %in% comparisons) {
+    fun.plot.summary(ls.diff.3, ls.miRNA2gene.3, ls.GOsum.3, 'Comparison 3')
+}
+```
+
+```{r echo = FALSE, fig.align='center', fig.cap='Result Summary for Comparison 3', out.width='80%'}
+if('Comparison 3' %in% comparisons){
+knitr::include_graphics(file.path(dir.out.fig, 'ResSum_Comparison 3.png'))
+}
+```
