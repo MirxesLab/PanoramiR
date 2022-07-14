@@ -495,3 +495,5 @@ if('Comparison 3' %in% comparisons){
 knitr::include_graphics(file.path(dir.out.fig, 'ResSum_Comparison 3.png'))
 }
 ```
+
+# Reference
