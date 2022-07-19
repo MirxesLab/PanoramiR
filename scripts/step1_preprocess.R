@@ -19,7 +19,7 @@
 
 # Read in file recording relationship between well position and miRNA ID
 miRList = read_excel(file.ref.miRList) %>%  # [Group, Position, miRBASE v22 Accession, miRNA ID]
-    dplyr::select(Position, 'miRNA ID')
+    dplyr::select('Position', 'miRNA ID')
 colnames(miRList) = c('Position', 'miRNA')  # [Position, miRNA]
 
 # --------------------------------------------------------------------------- #
@@ -40,14 +40,16 @@ for (i in 1:num.sample) {
     
     # Link CT values with miRN ID
     res.ext = inner_join(res.ext, miRList, by = 'Position') %>%
-        dplyr::select('miRNA', 'CT')
+        dplyr::select(miRNA, CT)
+        
     colnames(res.ext) = c('miRNA', no.sample)
     
     # Merge CT values of Samples
     if(i == 1) {
         df.input.data = res.ext
     } else {
-        df.input.data = inner_join(df.input.data, res.ext, by = c("miRNA"))
+        res.ext = res.ext[res.ext$miRNA == df.input.data$miRNA, ]
+        df.input.data = cbind(df.input.data, res.ext[, 2])
     }
 }
 
@@ -56,19 +58,19 @@ df.input.data = df.input.data[, c('miRNA', as.character(1:num.sample))]
 
 
 # --------------------------------------------------------------------------- #
-# First round filter
-    # Read in Threshold file
+
+# Read in Threshold file
 threshold = read_excel(file.ref.miRthld)
 threshold[threshold$miRNA == df.input.data$miRNA, ]
-    
-    # Filter based on cutoff.max, cutoff.min, and the threshold in threshold file
+
+# Filter based on cutoff.max, cutoff.min, and the threshold in threshold file
 df.input.data.Filt1 = df.input.data
 for (i in 1:nrow(df.input.data)) {
     for (j in 1:num.sample) {
         bloon.1 = df.input.data.Filt1[i,j+1] > threshold[i, 2]
         bloon.2 = df.input.data.Filt1[i,j+1] > cutoff.max
         bloon.3 = df.input.data.Filt1[i,j+1] < cutoff.min
-            
+        
         if (bloon.1[1] | bloon.2[1] | bloon.3[1]) {
             df.input.data.Filt1[i,j+1] = NA
         } 
