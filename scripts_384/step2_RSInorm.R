@@ -29,7 +29,7 @@ if(nrow(RNAvol) != num.sample) {stop('Please check ther number of sample in the 
 # Define function to calculate Factor
 # ---------------------------------- #
 fun.factor = function(df.x) {
-    mean.sample = apply(df.x[, -c(1,2)], 2, mean)
+    mean.sample = apply(df.x[, -c(1,2)], 2, mean, na.rm = TRUE)
     mean.all    = mean(mean.sample)
     factor  = mean.sample - mean.all
     return(factor)
