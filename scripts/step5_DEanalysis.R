@@ -93,17 +93,29 @@ fun.plot.dCt    = function(ls.diff, comp) {
     df.tmp = df.tmp[order(df.tmp$dCt, decreasing = FALSE), ]
     df.tmp$miRNA = factor(df.tmp$miRNA, levels = df.tmp$miRNA)
     
-    p.dCt = ggplot(df.tmp, 
-                   aes(x = miRNA, y = dCt, fill = type)) +
-        geom_bar(stat = 'identity', width = 0.5) +
-        scale_fill_manual(values = cols.sig.DE,
-                           breaks = c('sig.up', 'sig.down', 'ns')) +
-        theme_classic() +
-        theme(axis.text.x = element_text(angle = 270, hjust = 1, vjust = 0.5)) +
-        ylab("dCt Values") +
-        geom_hline(yintercept = c(threshold.DE.dCt, -threshold.DE.dCt), linetype = 'dashed') +
-        ggtitle(paste0("Differentially expressed miRNA ( ", comp, " )"))
-    
+    if(length(df.tmp$miRNA) > 40) {
+        p.dCt = ggplot(df.tmp, 
+                       aes(x = miRNA, y = dCt, fill = type)) +
+            geom_bar(stat = 'identity', width = 0.5) +
+            scale_fill_manual(values = cols.sig.DE,
+                              breaks = c('sig.up', 'sig.down', 'ns')) +
+            theme_classic() +
+            theme(axis.text.x =element_blank())+
+            ylab("dCt Values") +
+            geom_hline(yintercept = c(threshold.DE.dCt, -threshold.DE.dCt), linetype = 'dashed') +
+            ggtitle(paste0("Differentially expressed miRNA ( ", comp, " )")) 
+    } else {
+        p.dCt = ggplot(df.tmp, 
+                       aes(x = miRNA, y = dCt, fill = type)) +
+            geom_bar(stat = 'identity', width = 0.5) +
+            scale_fill_manual(values = cols.sig.DE,
+                              breaks = c('sig.up', 'sig.down', 'ns')) +
+            theme_classic() +
+            theme(axis.text.x = element_text(angle = 270, hjust = 1, vjust = 0.5))+
+            ylab("dCt Values") +
+            geom_hline(yintercept = c(threshold.DE.dCt, -threshold.DE.dCt), linetype = 'dashed') +
+            ggtitle(paste0("Differentially expressed miRNA ( ", comp, " )")) 
+    }
     return(p.dCt)    
 }
 
