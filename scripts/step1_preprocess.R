@@ -33,7 +33,7 @@ for (i in 1:num.sample) {
     no.sample = as.numeric(unlist(strsplit(unlist(strsplit(file.tmp, ' '))[3], '_'))[1])
     
     # Read in result file
-    res.ori = read_excel(file.tmp, skip = result.skip)
+    res.ori = read_excel(file.tmp, 'Results', skip = result.skip)
     res.ext = res.ori[, c('Well Position', 'CT')]
     colnames(res.ext) = c('Position', 'CT')
     str_sub(res.ext$Position[which(str_length(res.ext$Position) == 2)], 2, 1) = 0 # A1 -> A01
@@ -55,13 +55,16 @@ for (i in 1:num.sample) {
 
 # Change the order of columns
 df.input.data = df.input.data[, c('miRNA', as.character(1:num.sample))]
+df.input.data[, -1] = apply(df.input.data[, -1], 2, as.numeric)
 
 
 # --------------------------------------------------------------------------- #
 
 # Read in Threshold file
 threshold = read_excel(file.ref.miRthld)
+min.up.limit = min(threshold$Threshold, na.rm = TRUE)
 threshold[threshold$miRNA == df.input.data$miRNA, ]
+
 
 # Filter based on cutoff.max, cutoff.min, and the threshold in threshold file
 df.input.data.Filt1 = df.input.data
@@ -69,9 +72,9 @@ for (i in 1:nrow(df.input.data)) {
     for (j in 1:num.sample) {
         bloon.1 = df.input.data.Filt1[i,j+1] > threshold[i, 2]
         bloon.2 = df.input.data.Filt1[i,j+1] > cutoff.max
-        bloon.3 = df.input.data.Filt1[i,j+1] < cutoff.min
+        bloon.4 = is.na(df.input.data.Filt1[i,j+1])
         
-        if (bloon.1[1] | bloon.2[1] | bloon.3[1]) {
+        if (bloon.1[1] | bloon.2[1] |  bloon.4) {
             df.input.data.Filt1[i,j+1] = NA
         } 
     }
