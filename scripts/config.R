@@ -19,9 +19,11 @@ library(glue)
 library(grid)
 
 # Set Path
-dir.top     = '/Users/plateau/Documents/GitHub/PanoramiR'
-dir.out.fig = 'output/figures'
-dir.out.tbl = 'output/tables'
+dir.top      = '/Users/plateau/Documents/GitHub/PanoramiR'
+dir.input    = 'input_ncRNA'
+dir.resource = 'resources'
+dir.out.fig  = 'output/figures'
+dir.out.tbl  = 'output/tables'
 
 # Set working directory
 setwd(dir.top)
@@ -31,17 +33,19 @@ dir.create(dir.out.fig, recursive = TRUE, showWarnings = FALSE)
 dir.create(dir.out.tbl, recursive = TRUE, showWarnings = FALSE)
 
 # Set file path
-file.input.data  = file.path('input', 
-                             grep('*_Results.xlsx', 
-                                  list.files('input', all.files = FALSE), 
+file.input.data  = file.path(dir.input, 
+                             grep('*_Results.xls', 
+                                  list.files(dir.input, all.files = FALSE), 
                                   value = TRUE))    #[*.Results.xlsx]
-file.samplesheet = 'input/Sample Manifest Form.xlsx'
-png.workflow     = 'resources/workflow.png'
-file.ref.miRList = 'resources/miRList.xlsx'         # All miRNA: Group, Position, miRBASE v22 Accession, miRNAID
-file.ref.miRsp   = 'resources/miRSpike.xlsx'        # Spike-in miRNA: Position, miRNA ID, SP, Group
-file.ref.miRthld = 'resources/miRThreshold.xlsx'    # Only for PanoramiR: miRNA, Threshold
-file.ref.RNAvol  = 'resources/RNAvolume.xlsx'
-file.ref.target  = 'resources/Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt' # Will be changed into miTarBase data
+file.samplesheet = file.path(dir.input, 'Sample Manifest Form.xlsx')
+file.ref.miRList = file.path(dir.resource, 'miRList.xlsx')      # All miRNA: Group, Position, miRBASE v22 Accession, miRNAID
+file.ref.miRsp   = file.path(dir.resource, 'miRSpike.xlsx' )       # Spike-in miRNA: Position, miRNA ID, SP, Group
+file.ref.miRthld = file.path(dir.resource, 'miRThreshold.xlsx')    # Only for PanoramiR: miRNA, Threshold
+file.ref.RNAvol  = file.path(dir.resource, 'RNAvolume.xlsx')
+file.ref.target  = file.path(dir.resource, 'Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt') # Will be changed into miTarBase data
+
+png.workflow     = file.path(dir.resource, 'workflow.png')
+png.mSMRT.qPCR   = file.path(dir.resource, 'mSMRT_qPCR.png')
 
 # Set parameters
 is.basic       = TRUE        # Basic worflow execute Global Normalization. Non-basic workflow also execute normalization based on stable miRNA
