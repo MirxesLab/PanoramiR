@@ -18,18 +18,16 @@ source('scripts/step1.1_samplesheet.R') # Read in Samplesheet
 
 
 # Introduction
-MicroRNAs are a group of small noncoding RNAs that serve as key signalling molecules that regulate gene expression at the post-transcriptional level. miRNA expression analysis is an invaluable tool for biomarker development, which can be translated into early diagnosis, risk stratification, and therapeutic management tools ^[Chakraborty C et al. Therapeutic miRNA and siRNA: Moving from Bench to Clinic as Next Generation Medicine. Mol Ther Nucleic Acids 2017;8:132–143.].\
+MicroRNAs (miRNAs), a group of small non-coding RNAs, are found in many species of eukaryotes. MiRNAs regulate gene expression at the post-transcriptional level with in the cells and mediate intercellular communications when secreted into the local milieu or in circulation. It has been widely reported that dysregulation of miRNAs are implicated in pathologies of many human diseases, including cancer, cardiovascular disease and other chronic disease^[Krol J et al. The widespread regulation of microRNA biogenesis, function and decay. Nat Rev Genet 2010;11(9):597–610.], where they function as signalling messengers to mediate cell-cell communication ^[Hayes J et al. MicroRNAs in cancer: biomarkers, functions and therapy. Trends Mol Med 2014;20(8):460–469.]. Therefore, miRNAs hold great promise as potential biomarkers of human diseases^[Chakraborty C et al. Therapeutic miRNA and siRNA: Moving from Bench to Clinic as Next Generation Medicine. Mol Ther Nucleic Acids 2017;8:132–143.].
 
-Extracellular miRNAs have been widely reported as potential bomarkers in a variety of diseases, including cancer, cardiovascular disease and other chronic diseases^[Krol J et al. The widespread regulation of microRNA biogenesis, function and decay. Nat Rev Genet 2010;11(9):597–610.], where they function as signalling messengers to mediate cell-cell communication ^[Hayes J et al. MicroRNAs in cancer: biomarkers, functions and therapy. Trends Mol Med 2014;20(8):460–469.].\
-
-MiRXES offers the broadest microRNA technology platform to translate microRNA research into clinical applications, from biomarker discovery and validation to product development. 
+MiRNA expression analysis is an invaluable tool for biomarker development, which can provide important insight into the underlying mechanisms of disease development and can be translated into early diagnosis, risk stratification, as well as therapeutic management tools. MiRXES scientists and their collaborators have measured and analyzed miRNAs in over 50,000 different samples across more than 20 different diseases and conditions using the proprietary and patented qPCR technology. Based on the extensive experience in the field of miRNA detection and analysis, MiRXES can offer the most comprehensive microRNA technology platform which can translate microRNA research into clinical applications, from biomarker discovery and validation to product development. 
 
 **MiRXES' ID3EAL™ PanoramiR panel** is an effective approach to screening for miRNAs important in signaling pathways, disease mechanisms, or biomarker discovery for disease diagnosis and subtyping. PanoramiR targets **376 miRNAs** expertly curated from miRBase 22, HMDD 3.2 and The Cancer Genome Atlas. This is further cross-referenced with high-impact publications and in-house research data.
 
 
 # Workflow Overview
 
-376 miRNAs are detected by using MiRXES's modified stem-looped reverse transcription- qualitative PCR (mSMRT-qPCR) platform ^[Too, H. P., & Anwar, A. B. (2017). U.S. Patent No. 9,850,527. Washington, DC: U.S. Patent and Trademark Office.]. The mSMRT-qPCR method shows high selectivity for mature but not precursor forms of miRNAs and specific detection of highly similar sequences. Each step of the workflow, from sample handling to data analysis, is carefully designed to confer assay sensitivity, reduce variation and provide highest assay quality with minimal variation.\
+376 miRNAs are detected by using MiRXES's modified stem-looped reverse transcription-qualitative PCR (mSMRT-qPCR) platform ^[Too, H. P., & Anwar, A. B. (2017). U.S. Patent No. 9,850,527. Washington, DC: U.S. Patent and Trademark Office.]. The mSMRT-qPCR method uses a combination of a modified stem-loop oligonucleotide for reverse transcription (RT) and semi-nested PCR primers for interrogation of the synthesized complementary DNA (cDNA). The stem-loop structure of unique RT primers stabilizes RNA-DNA hybrid, thus increasing the RT efficiency for mature miRNA and allowing highly specific detection of mature miRNA with a large dynamic range of up to eight logs and a detection limit of sub-zeptomole per ml amounts of miRNA (10-100 molecules). MiRNA specific forward and reverse real-time PCR primers confer further specificity and enable robust amplification of amplicon.\
 
 The workflow comprises 3 main steps – RT, pre-amplification or augmentation (AUG) step, followed by qPCR. Extracted RNA from each sample is subjected to multiplexed RT in 4 RT pools – A, B, C, D – and the resulting cDNA samples from each RT pool is further divided into 2 multiplexed AUG reactions (RT pool A -> Aug A1 and A2, RT pool B -> Aug B1 and B2, etc) to enhance the amount of sample input for downstream qPCR analysis. Finally the augmented cDNA is pipetted into each well of the 384-well plate containing individual qPCR miRNA assays.
 
@@ -68,13 +66,13 @@ source('scripts/step2_RSInorm.R') # Calculate SP factor -> Normalization -> Seco
 
 # Summary of Experiment
 ## Number of miRNA Detected in Samples
-Figure below shows the number of miRNAs detected in each samples.
+The threshold Ct value is `r min.up.limit` ~ `r cutoff.max` (The threshold Ct value is variable based on miRNA). miRNAs in each samples with Ct values less than it corresponding threshold are selected for later analysis; Expression figures below shows the number of detected miRNAs in each samples.
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.align='center', fig.cap= "Number of miRNA Detected in Samples", out.width='80%'}
 ggplotly(p.num.miRNA) # generated in step2_RSInorm.R
 ```
 
 ## miRNA Expression Levels in Each Samples {.tabset .tabset-pills}
-Figure below shows the miRNA expression levels in each samples. Values have been spike-in normalized.
+Figure below shows the miRNA expression levels in each samples. Values have been filtered based on Ct value thresholds and then spike-in normalized.
 
 ### `r if('Comparison 1' %in% comparisons) {title.compare[1]}` {.unnumbered}
 ```{r echo = FALSE, warning= FALSE, message=FALSE, fig.align='center', fig.cap= "miRNA Ct values distribution of samples (Comparison 1)", out.width= '80%'}
@@ -102,7 +100,7 @@ if ("Comparison 3" %in% comparisons) {
 
 ## Missing Value Imputation
 The miRNAs with missing values in more than 10% (> 10%) of the total number of samples are not analysed. Else, the missing values are imputed by the lowest copy number across the samples.\
-**TODO: The Figure could be removed because most of the miRNA could be analyzed later**
+
 ```{r echo = FALSE, warning=FALSE, fig.align='center', fig.cap = 'Number of non-missing values of miRNA across samples', out.width = '80%'}
 source('scripts/step3_imputation.R')
 ggplotly(p.num.noNA) 
@@ -139,7 +137,6 @@ source('scripts/step4_GlobalNorm.R') # Global Normalization
 source('scripts/step4.1_OverviewInfo.R')
 ```
 
-**This Part Could be included in the standard report**
 
 ## Principal Component Analysis {.tabset .tabset-pills}
 Principal component analysis is performed on the normalized miRNA expression data to determine if there are any strong underlying patterns. PCA analysis for different comparisons is plotted respectively.
