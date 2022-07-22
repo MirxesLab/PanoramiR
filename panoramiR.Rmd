@@ -18,9 +18,9 @@ source('scripts/step1.1_samplesheet.R') # Read in Samplesheet
 
 
 # Introduction
-MicroRNAs (miRNAs), a group of small non-coding RNAs, are found in many species of eukaryotes. MiRNAs regulate gene expression at the post-transcriptional level with in the cells and mediate intercellular communications when secreted into the local milieu or in circulation. It has been widely reported that dysregulation of miRNAs are implicated in pathologies of many human diseases, including cancer, cardiovascular disease and other chronic disease^[Krol J et al. The widespread regulation of microRNA biogenesis, function and decay. Nat Rev Genet 2010;11(9):597–610.], where they function as signalling messengers to mediate cell-cell communication ^[Hayes J et al. MicroRNAs in cancer: biomarkers, functions and therapy. Trends Mol Med 2014;20(8):460–469.]. Therefore, miRNAs hold great promise as potential biomarkers of human diseases^[Chakraborty C et al. Therapeutic miRNA and siRNA: Moving from Bench to Clinic as Next Generation Medicine. Mol Ther Nucleic Acids 2017;8:132–143.].
+MicroRNAs (miRNAs), a group of small non-coding RNAs, are found in many species of eukaryotes. MiRNAs regulate gene expression at the post-transcriptional level in the cells and mediate intercellular communications when secreted into the local milieu or circulation. Dysregulation of miRNAs are implicated in pathologies of many human diseases, including cancer, cardiovascular disease and other chronic diseases^[Krol J et al. The widespread regulation of microRNA biogenesis, function and decay. Nat Rev Genet 2010;11(9):597–610.], where they function as signalling messengers to mediate cell-cell communication ^[Hayes J et al. MicroRNAs in cancer: biomarkers, functions and therapy. Trends Mol Med 2014;20(8):460–469.]. Therefore, miRNAs hold great promise as biomarkers of human diseases^[Chakraborty C et al. Therapeutic miRNA and siRNA: Moving from Bench to Clinic as Next Generation Medicine. Mol Ther Nucleic Acids 2017;8:132–143.].
 
-MiRNA expression analysis is an invaluable tool for biomarker development, which can provide important insight into the underlying mechanisms of disease development and can be translated into early diagnosis, risk stratification, as well as therapeutic management tools. MiRXES scientists and their collaborators have measured and analyzed miRNAs in over 50,000 different samples across more than 20 different diseases and conditions using the proprietary and patented qPCR technology. Based on the extensive experience in the field of miRNA detection and analysis, MiRXES can offer the most comprehensive microRNA technology platform which can translate microRNA research into clinical applications, from biomarker discovery and validation to product development. 
+MiRNA expression analysis is an invaluable tool for biomarker development, which can provide important insights into the underlying mechanisms of disease development. MiRNA expression profiles can be translated into early diagnosis, risk stratification, as well as therapeutic management tools. MiRXES scientists and their collaborators have analyzed miRNAs in over 50,000 different samples across more than 20 different diseases and conditions using proprietary and patented qPCR technology. Based on extensive experience in the field of miRNA detection and analysis, MiRXES can offer a proven microRNA technology platform which can translate microRNA research into clinical applications, from biomarker discovery and validation to product development. 
 
 **MiRXES' ID3EAL™ PanoramiR panel** is an effective approach to screening for miRNAs important in signaling pathways, disease mechanisms, or biomarker discovery for disease diagnosis and subtyping. PanoramiR targets **376 miRNAs** expertly curated from miRBase 22, HMDD 3.2 and The Cancer Genome Atlas. This is further cross-referenced with high-impact publications and in-house research data.
 
@@ -29,7 +29,7 @@ MiRNA expression analysis is an invaluable tool for biomarker development, which
 
 376 miRNAs are detected by using MiRXES's modified stem-looped reverse transcription-qualitative PCR (mSMRT-qPCR) platform ^[Too, H. P., & Anwar, A. B. (2017). U.S. Patent No. 9,850,527. Washington, DC: U.S. Patent and Trademark Office.]. The mSMRT-qPCR method uses a combination of a modified stem-loop oligonucleotide for reverse transcription (RT) and semi-nested PCR primers for interrogation of the synthesized complementary DNA (cDNA). The stem-loop structure of unique RT primers stabilizes RNA-DNA hybrid, thus increasing the RT efficiency for mature miRNA and allowing highly specific detection of mature miRNA with a large dynamic range of up to eight logs and a detection limit of sub-zeptomole per ml amounts of miRNA (10-100 molecules). MiRNA specific forward and reverse real-time PCR primers confer further specificity and enable robust amplification of amplicon.\
 
-The workflow comprises 3 main steps – RT, pre-amplification or augmentation (AUG) step, followed by qPCR. Extracted RNA from each sample is subjected to multiplexed RT in 4 RT pools – A, B, C, D – and the resulting cDNA samples from each RT pool is further divided into 2 multiplexed AUG reactions (RT pool A -> Aug A1 and A2, RT pool B -> Aug B1 and B2, etc) to enhance the amount of sample input for downstream qPCR analysis. Finally the augmented cDNA is pipetted into each well of the 384-well plate containing individual qPCR miRNA assays.
+The workflow comprises 3 main steps – RT, pre-amplification or augmentation (AUG), followed by qPCR. Extracted RNA from each sample is subjected to multiplexed RT in 4 RT pools – A, B, C, D – and the resulting cDNA samples from each RT pool is further divided into 2 multiplexed AUG reactions (RT pool A -> Aug A1 and A2, RT pool B -> Aug B1 and B2, etc) to enhance the amount of sample input for downstream qPCR analysis. Finally the augmented cDNA is pipetted into each well of the 384-well plate containing individual qPCR miRNA assays.
 
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.align='center', fig.cap="ID3EAL PanoramiR miRNA Panel Workflow Overview"}
 knitr::include_graphics(png.workflow)
@@ -38,14 +38,14 @@ knitr::include_graphics(png.workflow)
 # Pre-processing of Data
 
 ## Spike-in Normalization
-miRNA spike-ins are uniquely designed small RNAs (~22 nt ) with sequences distinct from endogenous miRNAs. These miRNA spike-ins have been extensively tested and are compatible with various isolation methods, including phenol/chloroform, phenol free, membrane, bead and precipitation based methods, provided the method retains the small RNA fraction. The use of miRNA spike-ins can monitor and normalize experimental variations in sample RNA isolation, reverse transcription and qPCR.
+miRNA spike-ins are uniquely designed small RNAs (~22 nt ) with sequences distinct from endogenous human miRNAs. These miRNA spike-ins have been extensively tested and are compatible with various isolation methods, including phenol/chloroform, phenol free, membrane, bead and precipitation based methods, provided the method retains the small RNA fraction. The use of miRNA spike-ins can monitor and normalize experimental variations in sample RNA isolation, reverse transcription and qPCR.
 
 The miRNA spike-ins can be used in two modes: \
-1. As RNA isolation control. miRNA spike-ins are added to sample lysis buffer or RNA isolation buffer before mixing with biological sample. A difference in the measured levels of miRNA spike-ins indicates varying RNA isolation yield and/or RNA purity. Therefore, the Ct values of miRNA spike-ins should be normalized by RNA concentration in samples before calculating spike-in factor.
+1. As RNA isolation control. miRNA spike-ins are added to sample lysis buffer or RNA isolation buffer before mixing with biological sample. A difference in the measured levels of miRNA spike-ins indicates varying RNA isolation yield and/or RNA purity. When used in RNA isolation, the RNA input volume to RT should be taken into consideration before spike-in Cts are used to calculate a normalization factor.
 
-2.As reverse transcription control. miRNA spike-ins are added to RT mix. Measured levels of miRNA spike ins allow normalization between RT reactions.
+2.As reverse transcription control. miRNA spike-ins are added to RT master mix. Measured levels of miRNA spike ins allow normalization between RT reactions to detect inconsistencies between samples e.g. presence of RT-qPCR inhibitors in some samples.
 
-The Ct values of targeted miRNA are first normalized by miRNA spike-ins. Each sample will have 8 Ct values of spike-ins (A1.SP, B1.SP, C1.SP, D1.SP, A2.SP, B2.SP, C2.SP, D2.SP). Each spike-in Ct values is used to calculate a spike-in factor which is added to Ct values of corresponding miRNAs. For the specific calculation method, please refer to the formula below.
+The Ct values of targeted miRNA are first normalized by miRNA spike-ins. Each sample will have a spike-in Ct corresponding to each AUG group (A1, A2, B1, B2 and so on). Each spike-in Ct values is used to calculate a spike-in factor which is added to Ct values of miRNAs in the corresponding AUG group. For the specific calculation method, please refer to the formula below.
 
 \begin{equation}
 \tag{1}
@@ -66,13 +66,13 @@ source('scripts/step2_RSInorm.R') # Calculate SP factor -> Normalization -> Seco
 
 # Summary of Experiment
 ## Number of miRNA Detected in Samples
-The threshold Ct value is `r min.up.limit` ~ `r cutoff.max` (The threshold Ct value is variable based on miRNA). miRNAs in each samples with Ct values less than it corresponding threshold are selected for later analysis; Expression figures below shows the number of detected miRNAs in each samples.
+The threshold Ct value is based on QC data for each specific batch of PanoramiR kit (`r min.up.limit` ~ `r cutoff.max`). miRNAs in each samples with Ct values less than it corresponding threshold are selected for later analysis; Expression figures below shows the number of detected miRNAs in each samples.
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.align='center', fig.cap= "Number of miRNA Detected in Samples", out.width='80%'}
 ggplotly(p.num.miRNA) # generated in step2_RSInorm.R
 ```
 
-## miRNA Expression Levels in Each Samples {.tabset .tabset-pills}
-Figure below shows the miRNA expression levels in each samples. Values have been filtered based on Ct value thresholds and then spike-in normalized.
+## miRNA Expression Level in Each Samples {.tabset .tabset-pills}
+Figure below shows the miRNA expression level in each sample. Values have been filtered based on Ct value thresholds and then spike-in normalized.
 
 ### `r if('Comparison 1' %in% comparisons) {title.compare[1]}` {.unnumbered}
 ```{r echo = FALSE, warning= FALSE, message=FALSE, fig.align='center', fig.cap= "miRNA Ct values distribution of samples (Comparison 1)", out.width= '80%'}
@@ -99,7 +99,7 @@ if ("Comparison 3" %in% comparisons) {
 ```
 
 ## Missing Value Imputation
-The miRNAs with missing values in more than 10% (> 10%) of the total number of samples are not analysed. Else, the missing values are imputed by the lowest copy number across the samples.\
+MiRNAs with missing values in more than 10% (> 10%) of the total number of samples are not analysed. Else, the missing values are imputed by the highest Ct value across the samples.\
 
 ```{r echo = FALSE, warning=FALSE, fig.align='center', fig.cap = 'Number of non-missing values of miRNA across samples', out.width = '80%'}
 source('scripts/step3_imputation.R')
@@ -107,7 +107,7 @@ ggplotly(p.num.noNA)
 ```
 
 ## Global Normalization
-Global normalization ^[Mestdagh P, Van Vlierberghe P, De Weer A, Muth D, Westermann F, Speleman F, Vandesompele J. A novel and universal method for microRNA RT-qPCR data normalization. Genome Biol. 2009;10(6):R64. doi: 10.1186/gb-2009-10-6-r64. Epub 2009 Jun 16. PMID: 19531210; PMCID: PMC2718498.] is performed following spike-in normalization. Global normalization is performed on the miRNAs from all the samples by ensuring that the arithmetic means Ct values from all the samples are the same. A normalization constant is added to the Ct values for each miRNA in the sample so that the arithmetic mean Ct values of all the samples becomes identical.\
+Global normalization ^[Mestdagh P, Van Vlierberghe P, De Weer A, Muth D, Westermann F, Speleman F, Vandesompele J. A novel and universal method for microRNA RT-qPCR data normalization. Genome Biol. 2009;10(6):R64. doi: 10.1186/gb-2009-10-6-r64. Epub 2009 Jun 16. PMID: 19531210; PMCID: PMC2718498.] is performed following spike-in normalization. A normalization constant is added to the Ct values for each miRNA in the sample so that the arithmetic mean Ct values of all the samples becomes identical.\
 
 \begin{equation}
 \tag{1}
@@ -195,7 +195,7 @@ source('scripts/step5_DEanalysis.R')
 ```
 
 ## Differentially expressed miRNA {.tabset .tabset-pills}
-The top 20 miRNAs having the smallest p value between the sample groups are listed in the table below. dCt of each miRNA is expressed as the mean Ct value of that in Group A minus the mean Ct value of that in Group B. Significance level is tested using Student's T-test and expressed in p-value.
+The top 20 miRNAs having the smallest p value between the sample groups are listed in the table below. dCt of each miRNA is expressed as the mean Ct value of that in Group A minus the mean Ct value of that in Group B. Statistical significance for each dCt is expressed as FDR corrected p-values.
 
 ### `r if('Comparison 1' %in% comparisons) {title.compare[1]}` {.unnumbered}
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
@@ -260,8 +260,8 @@ if('Comparison 3' %in% comparisons) {
 }
 ```
 
-## Bar Plot {.tabset .tabset-pills}
-Figures below show the dCt value between treatment and control group. All miRNAs in figures have passed student's t-test (pvalue <= 0.05). The red bars represent miRNA whose dCt greater than or equal to 1, and the blue bars represent miRNA whose dCt less than or equal to 1.
+## Waterfall plot {.tabset .tabset-pills}
+The waterfall plot displays statistically significant (p <0.05) dCt values between the treatment and control groups. The red bars represent miRNA whose dCt greater than or equal to 1, and the blue bars represent miRNA whose dCt less than or equal to 1.
 
 ### `r if('Comparison 1' %in% comparisons) {title.compare[1]}` {.unnumbered}
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.cap='Bar plot for Comparison 1', fig.align='center', out.width='80%'}
@@ -317,7 +317,7 @@ if ('Comparison 3' %in% comparisons) {
 # Gene Target Analysis
 
 ## Genes Targeted by Selected miRNA {.tabset .tabset-pills}
-miRNAs found differentially expressed between the sample groups (fold change \>= `r threshold.DE.dCt` and p-value =\< `r threshold.DE.pvalue`) are subjected to gene target analysis using mirTarBase ^[ H.-Y. Huang, Y.-C.-D. Lin, J. Li, K.-Y. Huang, S. Shrestha, H.-C. Hong, et al.]. A subset of the gene targets is shown below.
+miRNAs found differentially expressed between the sample groups (fold change \>= `r threshold.DE.dCt` and p-value =\< `r threshold.DE.pvalue`) are subjected to gene target analysis using mirTarBase ^[ H.-Y. Huang, Y.-C.-D. Lin, J. Li, K.-Y. Huang, S. Shrestha, H.-C. Hong, et al.]. A subset of the gene targets is shown below. For a list of all genes targeted by the differentially expressed miRNAs, please refer to the `target_gene_n.csv` file (where n is the comparison number).
 
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
 source('scripts/step6_targetgene.R')
@@ -335,8 +335,10 @@ if('Comparison 1' %in% comparisons) {
             caption = "Gene targets of the selected miRNA in Comparison 1") %>%
             kable_classic(full_width = T, html_font = 'Cambria') %>%
             scroll_box(width = "100%", height = "250px")
+        write.csv(ls.miRNA2gene.1$miRNA2gene.sig, file = file.path(dir.out.tbl, 'target_gene_1.csv'))
     }
 } else {description = ''}
+
 ```
 `r description`
 
@@ -352,8 +354,10 @@ if('Comparison 2' %in% comparisons) {
             caption = "Gene targets of the selected miRNA in Comparison 2") %>%
             kable_classic(full_width = T, html_font = 'Cambria') %>%
             scroll_box(width = "100%", height = "250px")
+        write.csv(ls.miRNA2gene.2$miRNA2gene.sig, file = file.path(dir.out.tbl, 'target_gene_2.csv'))
     }
 } else {description = ''}
+
 ```
 `r description`
 
@@ -369,6 +373,7 @@ if('Comparison 3' %in% comparisons) {
             caption = "Gene targets of the selected miRNA in Comparison 3") %>%
             kable_classic(full_width = T, html_font = 'Cambria') %>%
             scroll_box(width = "100%", height = "250px")
+        write.csv(ls.miRNA2gene.3$miRNA2gene.sig, file = file.path(dir.out.tbl, 'target_gene_3.csv'))
     }
 } else {description = ''}
 ```
@@ -493,4 +498,4 @@ knitr::include_graphics(file.path(dir.out.fig, 'ResSum_Comparison 3.png'))
 }
 ```
 
-# Reference
+# References
