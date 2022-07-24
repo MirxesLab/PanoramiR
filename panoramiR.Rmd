@@ -64,47 +64,26 @@ SP.Factor_{i,j} = Avg.SP_{i} - SP_{i,j}
 source('scripts/step2_RSInorm.R') # Calculate SP factor -> Normalization -> Second round filtering
 ```
 
-# Summary of Experiment
-## Number of miRNA Detected in Samples
-The threshold Ct value is based on QC data for each specific batch of PanoramiR kit (`r min.up.limit` ~ `r cutoff.max`). miRNAs in each samples with Ct values less than it corresponding threshold are selected for later analysis; Expression figures below shows the number of detected miRNAs in each samples.
+
+## Missing Value Imputation
+### Number of miRNA Detected in Samples
+The threshold Ct value is based on QC data for each specific batch of PanoramiR kit (`r min.up.limit` ~ `r cutoff.max`). MiRNAs in each samples with Ct values less than it corresponding threshold are selected for later analysis, otherwise miRNAs are considered as non-detect ; Expression figures below shows the number of detected miRNAs in each samples.
+
 ```{r echo = FALSE, warning = FALSE, message = FALSE, fig.align='center', fig.cap= "Number of miRNA Detected in Samples", out.width='80%'}
 ggplotly(p.num.miRNA) # generated in step2_RSInorm.R
 ```
 
-## miRNA Expression Level in Each Samples {.tabset .tabset-pills}
-Figure below shows the miRNA expression level in each sample. Values have been filtered based on Ct value thresholds and then spike-in normalized.
-
-### `r if('Comparison 1' %in% comparisons) {title.compare[1]}` {.unnumbered}
-```{r echo = FALSE, warning= FALSE, message=FALSE, fig.align='center', fig.cap= "miRNA Ct values distribution of samples (Comparison 1)", out.width= '80%'}
-if ("Comparison 1" %in% comparisons) {
-  p.violin.1 = fun.plot.violin('Comparison 1', col.compare.1)
-  ggplotly(p.violin.1)
-}
-```
-
-### `r if('Comparison 2' %in% comparisons) {title.compare[2]}` {.unnumbered}
-```{r echo = FALSE, warning= FALSE, message=FALSE, fig.align='center', fig.cap= "miRNA Ct values distribution of samples (Comparison 2)", out.width= '80%'}
-if ("Comparison 2" %in% comparisons) {
-  p.violin.2 = fun.plot.violin('Comparison 2', col.compare.2)
-  ggplotly(p.violin.2)
-}
-```
-
-### `r if('Comparison 3' %in% comparisons) {title.compare[3]}` {.unnumbered}
-```{r echo = FALSE, warning= FALSE, message=FALSE, fig.align='center', fig.cap= "miRNA Ct values distribution of samples (Comparison 3)", out.width= '80%'}
-if ("Comparison 3" %in% comparisons) {
-  p.violin.3 = fun.plot.violin('Comparison 3', col.compare.3)
-  ggplotly(p.violin.3)
-}
-```
-
-## Missing Value Imputation
+### Number of miRNA for Later Analysis
 MiRNAs with missing values in more than 10% (> 10%) of the total number of samples are not analysed. Else, the missing values are imputed by the highest Ct value across the samples.\
-
 ```{r echo = FALSE, warning=FALSE, fig.align='center', fig.cap = 'Number of non-missing values of miRNA across samples', out.width = '80%'}
 source('scripts/step3_imputation.R')
-ggplotly(p.num.noNA) 
+kableExtra::kbl(df.miss,
+                caption = "Number of missing value of miRNAs acorss samples",
+                col.names = gsub("[.]", " ", names(df.miss))) %>%
+  kable_classic(full_width = T, html_font = "Cambria") %>%
+    footnote(general = 'Tolerable missing values across samples are no more than 10% number of samples')
 ```
+
 
 ## Global Normalization
 Global normalization ^[Mestdagh P, Van Vlierberghe P, De Weer A, Muth D, Westermann F, Speleman F, Vandesompele J. A novel and universal method for microRNA RT-qPCR data normalization. Genome Biol. 2009;10(6):R64. doi: 10.1186/gb-2009-10-6-r64. Epub 2009 Jun 16. PMID: 19531210; PMCID: PMC2718498.] is performed following spike-in normalization. A normalization constant is added to the Ct values for each miRNA in the sample so that the arithmetic mean Ct values of all the samples becomes identical.\
@@ -129,8 +108,45 @@ Global.Factor_i = Avg_{all} - Avg_{sample,i}
 3. $Global.Factor_i$ is the correction factor of sample $i$ for global normalization.
 
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
-source('scripts/step4_GlobalNorm.R') # Global Normalization
+source('scripts/step4_GlobalNorm.R') # Global Normalization + Violin plot
 ```
+
+
+
+# Summary of Experiment
+
+
+## miRNA Expression Level in Each Samples {.tabset .tabset-pills}
+Figure below shows the miRNA expression level in each sample. Values have been filtered based on Ct value thresholds and then spike-in as well as global normalized.
+
+### `r if('Comparison 1' %in% comparisons) {title.compare[1]}` {.unnumbered}
+```{r echo = FALSE, warning= FALSE, message=FALSE, fig.align='center', fig.cap= "miRNA Ct values distribution of samples (Comparison 1)", out.width= '80%'}
+if ("Comparison 1" %in% comparisons) {
+  p.violin.1 = fun.plot.violin('Comparison 1', col.compare.1)
+  p.violin.1
+}
+
+```
+
+### `r if('Comparison 2' %in% comparisons) {title.compare[2]}` {.unnumbered}
+```{r echo = FALSE, warning= FALSE, message=FALSE, fig.align='center', fig.cap= "miRNA Ct values distribution of samples (Comparison 2)", out.width= '80%'}
+if ("Comparison 2" %in% comparisons) {
+  p.violin.2 = fun.plot.violin('Comparison 2', col.compare.2)
+  p.violin.2
+}
+```
+
+### `r if('Comparison 3' %in% comparisons) {title.compare[3]}` {.unnumbered}
+```{r echo = FALSE, warning= FALSE, message=FALSE, fig.align='center', fig.cap= "miRNA Ct values distribution of samples (Comparison 3)", out.width= '80%'}
+if ("Comparison 3" %in% comparisons) {
+  p.violin.3 = fun.plot.violin('Comparison 3', col.compare.3)
+  p.violin.3
+}
+```
+
+
+
+
 
 # Overview Information
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
@@ -261,7 +277,7 @@ if('Comparison 3' %in% comparisons) {
 ```
 
 ## Waterfall plot {.tabset .tabset-pills}
-The waterfall plot displays statistically significant (p <0.05) dCt values between the treatment and control groups. The red bars represent miRNA whose dCt greater than or equal to 1, and the blue bars represent miRNA whose dCt less than or equal to 1.
+The waterfall plot displays statistically significant (p < `r threshold.DE.pvalue`) dCt values between the treatment and control groups. The red bars represent miRNA whose dCt greater than or equal to `r threshold.DE.dCt`, and the blue bars represent miRNA whose dCt less than or equal to `r threshold.DE.dCt`.
 
 ### `r if('Comparison 1' %in% comparisons) {title.compare[1]}` {.unnumbered}
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.cap='Bar plot for Comparison 1', fig.align='center', out.width='80%'}
@@ -380,7 +396,7 @@ if('Comparison 3' %in% comparisons) {
 `r description`
 
 
-## GO Enrichment Analysis {.tabset .tabset-pills}
+## GO Enrichment Analysis ^[Alexa A, Rahnenfuhrer J (2022). _topGO: Enrichment Analysis for Gene Ontology_. R package version 2.48.0.] {.tabset .tabset-pills} 
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
 source('scripts/step7_go.R')
 ```
