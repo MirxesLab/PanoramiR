@@ -3,6 +3,7 @@
 # =========================================================================== #
 
 # Load Packages
+library(rmdformats)
 library(dplyr)
 library(readxl)
 library(stringi)
@@ -41,6 +42,7 @@ file.input.data  = file.path(dir.input,
                                   value = TRUE))    #[*.Results.xlsx]
 file.samplesheet = 'input_384/samplesheet.xlsx'
 png.workflow     = file.path(dir.resource, 'knowledge_384.png')
+png.mSMRT.qPCR   = file.path(dir.resource, 'mSMRT_qPCR.png')
 file.ref.miRList = file.path(dir.resource, 'miRList_384.xlsx')        # All miRNA: Group, Position, miRBASE v22 Accession, miRNAID
 file.ref.RNAvol  = file.path(dir.resource, 'RNAvolume.xlsx')
 file.ref.target  = file.path(dir.resource, 'Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt') # Will be changed into miTarBase data
