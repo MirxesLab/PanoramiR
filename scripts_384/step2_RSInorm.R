@@ -154,54 +154,6 @@ p.num.miRNA = ggplot(data = df.miRNA,
     ggtitle('The number of miRNA detected') +
     labs(y = 'Number of miRNA')
 
-# Visualization: miRNA Distribution
-# ---------------------------------- #
-fun.plot.violin = function(comp, cols) {
-    # Data frame recording the Sample and Comparison Group
-    df.compare = ls.compare.group[[comp]]
-    groupA.sample = df.compare$Samples[df.compare[, 2] == "A"]
-    
-    # Preparation data frame of SP normalization CT values 
-    df.input.data.SPnorm.tmp = t(df.input.data.SPnorm[, -1])
-    colnames(df.input.data.SPnorm.tmp) = df.input.data.SPnorm$miRNA
-    df.input.data.SPnorm.tmp = as.data.frame(df.input.data.SPnorm.tmp) %>%
-        dplyr::mutate(Samples = as.numeric(colnames(df.input.data.SPnorm)[-1])) %>%
-        dplyr::select(Samples, df.input.data.SPnorm$miRNA)
-    
-    df.tmp = dplyr::inner_join(df.compare, df.input.data.SPnorm.tmp,by = "Samples")
-    
-    # Reorder the miRNA based on the mean of miRNA across samples
-    df.tmp.t = t(df.tmp[, -c(1:2)][, order(apply(df.tmp[, -c(1:2)],
-                                                 2,
-                                                 mean,
-                                                 na.rm = TRUE),
-                                           decreasing = FALSE)])
-    colnames(df.tmp.t) = df.tmp$Samples 
-    
-    # Prepare data frame for Violin plot
-    df.tmp.melt = reshape2::melt(df.tmp.t[-c(1,2), ])
-    df.tmp.melt = df.tmp.melt %>% 
-        dplyr::mutate(group =  ifelse(Var2 %in% groupA.sample, 'A', 'B'))
-    colnames(df.tmp.melt) = c('miRNA', 'sample', 'log2cp', 'group')
-    
-    
-    df.tmp.melt$sample = paste0('sample_', df.tmp.melt$sample)
-    df.tmp.melt$sample = factor(df.tmp.melt$sample,
-                                levels = unique(df.tmp.melt$sample))
-    df.tmp.melt$group = factor(df.tmp.melt$group)
-    
-    # Violin Plot
-    p.violin = ggplot(df.tmp.melt,
-                      aes(x = sample, y = log2cp, fill = group)) +
-        geom_violin(trim = TRUE) +
-        theme_classic() +
-        theme(axis.text.x = element_text(angle = 270, hjust = 1, vjust = 0.5)) +
-        scale_fill_manual(values = alpha(cols, 0.5)) +
-        ylab("Ct Values") +
-        ggtitle(paste0("miRNA Expression Levels in Each Samples ( ", comp, " )"))
-    
-    return(p.violin)
-}
 
 
 # Save Files
