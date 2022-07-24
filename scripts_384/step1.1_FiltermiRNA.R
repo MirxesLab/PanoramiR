@@ -46,7 +46,7 @@ p.filtermiRNA = ggplot() +
                size = 0.5) +
     theme_classic() +
     theme(axis.text.x = element_blank()) +
-    geom_hline(yintercept = c(cutoff.max), 
+    geom_hline(yintercept = c(cutoff.sp), 
                linetype = "dashed",
                color = col.compare.2) +
     xlab("miRNA") +
