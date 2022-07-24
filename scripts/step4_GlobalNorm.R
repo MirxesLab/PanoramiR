@@ -84,7 +84,9 @@ fun.plot.violin = function(comp, cols) {
                 colors = c(A = cols[1], B = cols[2]),
                          box = list(visible = T),
                          type = 'violin') %>%
-        layout(title = list(text = comp),
+        layout(title = list(text = paste('miRNA expression level in each sample (',
+                                         comp,
+                                         ')')),
                xaxis = list(title = 'sample', tickangle = 90),
                yaxis = list(title = 'Ct Values', zeroline = F))
     
