@@ -128,10 +128,6 @@ Global.Factor_i = Avg_{all} - Avg_{sample,i}
 source('scripts/step4_GlobalNorm.R') # Global Normalization
 ```
 
-
-
-
-# Summary of Experiment
 ## Detected miRNA Expression Level in Each Samples {.tabset .tabset-pills}
 Figure below shows the miRNA expression level in each sample. Values have been filtered based on Ct value threshold (`r cutoff.max`) and then spike-in and global normalized.
 
@@ -161,10 +157,7 @@ if ("Comparison 3" %in% comparisons) {
 ```
 
 
-
-
-
-# Overview Information
+# MiRNAs Overview
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
 source('scripts/step4.1_OverviewInfo.R')
 ```

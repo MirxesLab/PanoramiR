@@ -112,10 +112,6 @@ source('scripts/step4_GlobalNorm.R') # Global Normalization + Violin plot
 ```
 
 
-
-# Summary of Experiment
-
-
 ## miRNA Expression Level in Each Samples {.tabset .tabset-pills}
 Figure below shows the miRNA expression level in each sample. Values have been filtered based on Ct value thresholds and then spike-in as well as global normalized.
 
@@ -145,10 +141,7 @@ if ("Comparison 3" %in% comparisons) {
 ```
 
 
-
-
-
-# Overview Information
+# MiRNA Overview
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
 source('scripts/step4.1_OverviewInfo.R')
 ```
