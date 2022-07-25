@@ -21,12 +21,12 @@ index.remove = which(apply(df.input.data.SPnorm,
 df.input.data.noNA = df.input.data.SPnorm[-index.remove, ]
 
 # Impute missing value based on the minimum value of miRNA across samples
-min.miRNA = as.numeric(apply(df.input.data.noNA, 1, min, na.rm = TRUE))
-num.miRNA.noNA = length(min.miRNA)
+max.miRNA = as.numeric(apply(df.input.data.noNA, 1, max, na.rm = TRUE))
+num.miRNA.noNA = length(max.miRNA)
 for (i in 1:num.miRNA.noNA) {
     df.input.data.noNA[i, -1] = replace(df.input.data.noNA[i, -1],
                                       which(is.na(df.input.data.noNA[i, -1])),
-                                      min.miRNA[i])
+                                      max.miRNA[i])
 }
 
 
