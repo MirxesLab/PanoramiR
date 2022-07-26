@@ -3,24 +3,32 @@
 # =========================================================================== #
 
 # Load Packages
+# --------------------------- #
 library(dplyr)
 library(readxl)
 library(stringi)
 library(stringr)
+
+library(topGO)
+library(DESeq2) # Could be Limma
+
 library(pheatmap)
 library(RColorBrewer)
 library(ggplot2)
-library(plotly)
-library(knitr)
-library(kableExtra)
-library(topGO)
+library(plotly) # For interactive
 library(Gmisc)
 library(glue)
 library(grid)
 
-# Set Path
+library(knitr)
+library(kableExtra)
+
+
+
+# Set Directory
+# --------------------------- #
 dir.top      = '/Users/plateau/Documents/GitHub/PanoramiR'
-dir.input    = 'input_ncRNA'
+dir.input    = 'input_biofluid'
 dir.resource = 'resources'
 dir.out.fig  = 'output/figures'
 dir.out.tbl  = 'output/tables'
@@ -33,27 +41,58 @@ dir.create(dir.out.fig, recursive = TRUE, showWarnings = FALSE)
 dir.create(dir.out.tbl, recursive = TRUE, showWarnings = FALSE)
 
 # Set file path
-file.input.data  = file.path(dir.input, 
-                             grep('*_Results.xls', 
-                                  list.files(dir.input, all.files = FALSE), 
-                                  value = TRUE))    #[*.Results.xlsx]
+# --------------------------- #
+# Pattern of input file names: 2020-11-16_093607 2007 001_Results.xlsx [Cancer]
+# Pattern of input file names: 2020-11-16_093607 2007 001_002_Results.xlsx [Biofluid]
+    # Experiment Time: 2020-11-16_093607
+    # Unique sample ID: 2007 001 or 2007 001_002 [Recorded in sample manifest form]
+##### Input
+# file.input.data  = file.path(dir.input,
+#                              grep('*_Results.*',
+#                                   list.files(dir.input, all.files = FALSE),
+#                                   value = TRUE))
 file.samplesheet = file.path(dir.input, 'Sample Manifest Form.xlsx')
-file.ref.miRList = file.path(dir.resource, 'miRList.xlsx')      # All miRNA: Group, Position, miRBASE v22 Accession, miRNAID
-file.ref.miRsp   = file.path(dir.resource, 'miRSpike.xlsx' )       # Spike-in miRNA: Position, miRNA ID, SP, Group
-file.ref.miRthld = file.path(dir.resource, 'miRThreshold.xlsx')    # Only for PanoramiR: miRNA, Threshold
-file.ref.RNAvol  = file.path(dir.resource, 'RNAvolume.xlsx')
-file.ref.target  = file.path(dir.resource, 'Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt') # Will be changed into miTarBase data
+file.RNAvol      = file.path(dir.input, 'RNAvolume.xlsx')
+arg.pipeline     = 'Biofluid' #Option: ['Cancer', 'Biofluid', 'PanoramiR']
 
-png.workflow     = file.path(dir.resource, 'workflow.png')
-png.mSMRT.qPCR   = file.path(dir.resource, 'mSMRT_qPCR.png')
+##### Common Resources
+file.ref.target  = file.path(dir.resource, 'Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt') 
+png.mSMRT.qPCR   = file.path(dir.resource, 'mSMRT_qPCR.png') # Haven't been inserted into report
+
+##### Pipeline based resources
+if(arg.pipeline == 'PanoramiR') { # PanoramiR Pipeline
+    file.ref.miRList = file.path(dir.resource, 'miRList_PanoramiR.xlsx') # [Group, Position, miRBASE v22 Accession, miRNAID]
+    file.ref.miRsp   = file.path(dir.resource, 'miRSpike.xlsx' )         # [Spike-in miRNA: Position, miRNA ID, SP, Group]
+    file.ref.miRthld = file.path(dir.resource, 'miRThreshold.xlsx')      # [miRNA, Threshold]
+    png.workflow     = file.path(dir.resource, 'workflow_PanoramiR.png')
+    
+} else if (arg.pipeline == 'Cancer') { # Cancer Pipeline
+    file.ref.miRList = file.path(dir.resource, 'miRList_Cancer.xlsx')
+    png.workflow     = file.path(dir.resource, 'workflow_Cancer.png')
+    name.sp          = c('Spike-in RNA Ctr 1', 'Spike-in RNA Ctr 2')
+    name.ipc         = c('Inter-plate Calibrator 1', 'Inter-plate Calibrator 2')
+    
+} else if (arg.pipeline == 'Biofluid') { # Biofluid Pipeline
+    file.ref.miRList = file.path(dir.resource, 'miRList_Biofluid.xlsx')
+    png.workflow     = file.path(dir.resource, 'workflow_Biofluid.png')
+    name.sp          = c('Spike-in RNA Ctr 1', 'Spike-in RNA Ctr 2')
+    name.ipc         = c('Inter-plate Calibrator 1', 'Inter-plate Calibrator 2')
+}
 
 # Set parameters
-is.basic       = TRUE        # Basic worflow execute Global Normalization. Non-basic workflow also execute normalization based on stable miRNA
-is.RTsp        = FALSE       # If the spike-in is Reverse Transcript Spike-in
+# --------------------------- #
+is.RTsp        = FALSE       # Whether the spike-in is Reverse Transcript Spike-in -> Whether Normalized by RNA input volume
+
+check.ipc       = 25          # If IPC has Ct values greater than 25, it indicates qPCR reaction has failed. -> remove those samples
+sd.ipc          = 0.5         # Standard deviation greater than 0.5 indicates pipetting error and caution should be taken when interpreting results
+
+check.sp.strict = 30          # all Spike-Ins from all samples have Ct value lower than this value -> remove those samples with Sp Ct values > 30
+chech.sp.mild   = 25          # Ct value higher than 25 indicates poor isolation efficiency or cDNA synthesis efficiency
+diff.sp         = 0.5         # only when is.RTsp = TRUE. larger difference is usually a sign of pipetting error.
 
 result.skip    = 46          # The number depends on the machine
 cutoff.max     = 33          # The first round filter, before normalization
-cutoff.min     = 5
+cutoff.min     = 0           # Can be changed based on customer' requirement
 cutoff.sp      = 32          # The second round filter, for spike-in normalization
 
 threshold.impute    = 0.1    # No more than 10% missing value in miRNA
