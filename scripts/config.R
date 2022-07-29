@@ -8,6 +8,7 @@ library(dplyr)
 library(readxl)
 library(stringi)
 library(stringr)
+library(writexl)
 
 library(topGO)
 library(DESeq2) # Could be Limma
@@ -28,7 +29,7 @@ library(kableExtra)
 # Set Directory
 # --------------------------- #
 dir.top      = '/Users/plateau/Documents/GitHub/PanoramiR'
-dir.input    = 'input_biofluid'
+dir.input    = 'input_cancer'
 dir.resource = 'resources'
 dir.out.fig  = 'output/figures'
 dir.out.tbl  = 'output/tables'
@@ -47,13 +48,9 @@ dir.create(dir.out.tbl, recursive = TRUE, showWarnings = FALSE)
     # Experiment Time: 2020-11-16_093607
     # Unique sample ID: 2007 001 or 2007 001_002 [Recorded in sample manifest form]
 ##### Input
-# file.input.data  = file.path(dir.input,
-#                              grep('*_Results.*',
-#                                   list.files(dir.input, all.files = FALSE),
-#                                   value = TRUE))
 file.samplesheet = file.path(dir.input, 'Sample Manifest Form.xlsx')
 file.RNAvol      = file.path(dir.input, 'RNAvolume.xlsx')
-arg.pipeline     = 'Biofluid' #Option: ['Cancer', 'Biofluid', 'PanoramiR']
+arg.pipeline     = 'PanoramiR' #Option: ['Cancer', 'Biofluid', 'PanoramiR']
 
 ##### Common Resources
 file.ref.target  = file.path(dir.resource, 'Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt') 
@@ -83,12 +80,12 @@ if(arg.pipeline == 'PanoramiR') { # PanoramiR Pipeline
 # --------------------------- #
 is.RTsp        = FALSE       # Whether the spike-in is Reverse Transcript Spike-in -> Whether Normalized by RNA input volume
 
-check.ipc       = 25          # If IPC has Ct values greater than 25, it indicates qPCR reaction has failed. -> remove those samples
-sd.ipc          = 0.5         # Standard deviation greater than 0.5 indicates pipetting error and caution should be taken when interpreting results
+threshold.ipc  = 25          # If IPC has Ct values greater than 25, it indicates qPCR reaction has failed. -> remove those samples
+sd.ipc         = 0.5         # Standard deviation greater than 0.5 indicates pipetting error and caution should be taken when interpreting results
 
-check.sp.strict = 30          # all Spike-Ins from all samples have Ct value lower than this value -> remove those samples with Sp Ct values > 30
-chech.sp.mild   = 25          # Ct value higher than 25 indicates poor isolation efficiency or cDNA synthesis efficiency
-diff.sp         = 0.5         # only when is.RTsp = TRUE. larger difference is usually a sign of pipetting error.
+
+threshold.sp   = 30          # all Spike-Ins from all samples have Ct value lower than this value -> remove those samples with Sp Ct values > 30
+diff.sp        = 0.5         # only when is.RTsp = TRUE. larger difference is usually a sign of pipetting error.
 
 result.skip    = 46          # The number depends on the machine
 cutoff.max     = 33          # The first round filter, before normalization
