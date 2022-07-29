@@ -11,6 +11,7 @@
     
     # df.anno.all
     # color.anno.all
+    # allmiRNA [for overview info heat map]
 
     # sample.dist
     # sample.dist.matrix
@@ -88,13 +89,15 @@ fun.heatmap = function(df, main, anno.df, anno.col) {
 # Heatmap For All miRNA
 # ------------------------------------- #
 # Prepare the data frame for heatmap
-df.tmp = df.input.data.GlobalNorm[, -1]
-rownames(df.tmp) = df.input.data.GlobalNorm$miRNA
-colnames(df.tmp) = paste0('sample_', colnames(df.input.data.GlobalNorm)[-1])
+allmiRNA = df.input.data.GlobalNorm[, -1] %>% as.data.frame()
+rownames(allmiRNA) = df.input.data.GlobalNorm$miRNA
+colnames(allmiRNA) = paste0('sample_', colnames(df.input.data.GlobalNorm)[-1])
 
 # Prepare annotation data frame for heatmap
-df.anno.all = df.samplesheet[, c('Samples', comparisons[comparisons != "Comparison 0"])] %>%
-    tibble::column_to_rownames("Samples")
+df.anno.all = df.samplesheet[, c('Samples', comparisons[comparisons != "Comparison 0"])]
+df.anno.all = df.anno.all[df.anno.all$Samples %in% colnames(df.input.data.GlobalNorm)[-1], ] %>%
+    tibble::column_to_rownames('Samples')
+
 rownames(df.anno.all) = paste0('sample_', df.samplesheet$Samples)
 
 # Prepare annotation color for heatmap
@@ -102,9 +105,6 @@ color.anno.all = list('Comparison 1' = c(A = col.compare.1[1], B = col.compare.1
                       'Comparison 2' = c(A = col.compare.2[1], B = col.compare.2[2]),
                       'Comparison 3' = c(A = col.compare.3[1], B = col.compare.3[2]))
 color.anno.all = color.anno.all[comparisons[comparisons != "Comparison 0"]]
-
-# heat map for miRNA
-
 
 # Heatmap for sample-sample distance
 # ------------------------------------- #

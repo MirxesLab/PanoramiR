@@ -17,7 +17,7 @@ fun.targetGene = function(ls.diff) {
     
     ls.miRNA2gene = list()
     
-    df.res.ori = ls.diff$res.ori         # Contain all miRNA
+    df.res.ori = ls.diff$res.order         # Contain all miRNA
     df.res.filter = ls.diff$res.filter   # Contain miRNA with pvalue <= 0.05, abs(dCt) >= 1
     
     if(nrow(df.res.filter) == 0) {      

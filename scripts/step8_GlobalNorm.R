@@ -1,11 +1,13 @@
 # =========================================================================== #
-# Step 4 Global Normalization
+# Step 8 Global Normalization
 # --------------------------------------------------------------------------- #
 # Input:
-    # df.input.data.noNA [Step 3][row: 376 miRNA, column: miRNA, 1, 2, ...]
+    # df.input.data.noNA [miRNA, 1, 2, ...]
     
 # Output:
-    # df.input.data.GlobalNorm [row: 376 miRNA, column: miRNA, 1, 2, ...]
+    # df.input.data.GlobalNorm      -> Save
+    # fun.plot.violin 
+    
 # =========================================================================== #
 
 # Global Normalization
@@ -21,6 +23,7 @@ GN.Factor = mean.sample - mean.all
 
 # Global Normalization
 df.input.data.GlobalNorm = df.input.data.noNA
+num.sample = ncol(df.input.data.noNA) - 1
 for (i in 1:num.sample) {
     df.input.data.GlobalNorm[, i+1] = df.input.data.noNA[, i+1] - GN.Factor[i]
 }
@@ -82,27 +85,24 @@ fun.plot.violin = function(comp, cols) {
                 showlegend = FALSE,
                 color = ~ group,
                 colors = c(A = cols[1], B = cols[2]),
-                         box = list(visible = T),
-                         type = 'violin') %>%
+                box = list(visible = T),
+                meanline = list(visible = T),
+                type = 'violin') %>%
         layout(title = list(text = paste('miRNA expression level in each sample (',
                                          comp,
                                          ')')),
                xaxis = list(title = 'sample', tickangle = 90),
                yaxis = list(title = 'Ct Values', zeroline = F))
     
+
     return(fig.violin)
 }
 
-
-
-
 # Save Results
 # -------------------------- #
-df.input.data.GlobalNorm.tmp = df.input.data.GlobalNorm
-colnames(df.input.data.GlobalNorm.tmp) = c('miRNA', 
-                                           paste0('sample_', 
-                                                  colnames(df.input.data.GlobalNorm.tmp)[-1]))
-write.table(df.input.data.GlobalNorm.tmp,
-            file = file.path(dir.out.tbl, "Global.Norm.tsv"),
-            sep = '\t',
-            row.names = FALSE)
+tmp = df.input.data.GlobalNorm
+colnames(tmp) = c('miRNA', paste('sample', colnames(tmp)[-1]))
+write_xlsx(tmp, file.path(dir.out.tbl, 'Data GlobalNorm.xlsx'))
+
+
+

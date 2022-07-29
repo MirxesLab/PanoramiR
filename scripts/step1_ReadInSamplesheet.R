@@ -57,7 +57,7 @@ comparisons <- sapply(1:3,
 ls.compare.group <- list()
 
 for (i in 1:sum(n.comp.group)) {
-    df.tmp = df.samplesheet[,c(1,(1+i), 7)] 
+    df.tmp = df.samplesheet[,c(1,(1+i), 7)]  # sample, comparison, sample type
     df.tmp = df.tmp %>%
         dplyr::filter(!is.na(df.tmp[2]))
     
@@ -85,9 +85,9 @@ fun.mergeID = function(even) {
         # num.sample = 2n, even = num.sample
         # num.sample = 2n + 1, even = num.sample - 1
     
-    # row in the final data frame
+    # row in the final df.sampleID
     fun.mergeRow = function(i) {
-        row = data.frame(Samples = paste0(i, '_', i + 1),
+        row = data.frame(Samples = paste0(df.sampleID$Samples[i], '_', df.sampleID$Samples[i + 1]),
                          SampleID = paste0(splitID[[1]][1],
                                            ' ',
                                            splitID[[i]][2],
@@ -116,5 +116,3 @@ if(arg.pipeline == 'Biofluid') {
         df.sampleID = rbind(df.sampleID.tmp, df.sampleID[num.sample, ])
     }
 }
-
-
