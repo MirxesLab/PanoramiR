@@ -25,7 +25,7 @@ arg.piprline = 'PanoramiR'
 
 
 # Introduction
-MicroRNAs (miRNAs), a group of small non-coding RNAs, are found in many species of eukaryotes. MiRNAs regulate gene expression at the post-transcriptional level in the cells and mediate intercellular communications when secreted into the local milieu or circulation. Dysregulation of miRNAs are implicated in pathologies of many human diseases, including cancer, cardiovascular disease and other chronic diseases^[Krol J et al. The widespread regulation of microRNA biogenesis, function and decay. Nat Rev Genet 2010;11(9):597–610.], where they function as signalling messengers to mediate cell-cell communication ^[Hayes J et al. MicroRNAs in cancer: biomarkers, functions and therapy. Trends Mol Med 2014;20(8):460–469.]. Therefore, miRNAs hold great promise as biomarkers of human diseases^[Chakraborty C et al. Therapeutic miRNA and siRNA: Moving from Bench to Clinic as Next Generation Medicine. Mol Ther Nucleic Acids 2017;8:132–143.].
+MicroRNAs (miRNAs), a group of small non-coding RNAs, are found in many species of eukaryotes. MiRNAs regulate gene expression at the post-transcriptional level in the cells and mediate intercellular communications when secreted into the local milieu or circulation. Dysregulation of miRNAs are implicated in pathologies of many human diseases, including cancer, cardiovascular disease and other chronic diseases^[Krol, J., Loedige, I., & Filipowicz, W. (2010). The widespread regulation of microRNA biogenesis, function and decay. Nat Rev Genet, 11(9), 597-610.], where they function as signalling messengers to mediate cell-cell communication ^[Hayes, J., Peruzzi, P. P., & Lawler, S. (2014). MicroRNAs in cancer: biomarkers, functions and therapy. Trends Mol Med, 20(8), 460-469.]. Therefore, miRNAs hold great promise as biomarkers of human diseases^[Chakraborty, C., Sharma, A. R., Sharma, G., Doss, C. G. P., & Lee, S.-S. (2017). Therapeutic miRNA and siRNA: Moving from Bench to Clinic as Next Generation Medicine. Molecular Therapy - Nucleic Acids, 8, 132-143.].
 
 MiRNA expression analysis is an invaluable tool for biomarker development, which can provide important insights into the underlying mechanisms of disease development. MiRNA expression profiles can be translated into early diagnosis, risk stratification, as well as therapeutic management tools. MiRXES scientists and their collaborators have analyzed miRNAs in over 50,000 different samples across more than 20 different diseases and conditions using proprietary and patented qPCR technology. Based on extensive experience in the field of miRNA detection and analysis, MiRXES can offer a proven microRNA technology platform which can translate microRNA research into clinical applications, from biomarker discovery and validation to product development. 
 
@@ -34,7 +34,7 @@ MiRNA expression analysis is an invaluable tool for biomarker development, which
 
 # Workflow Overview
 
-376 miRNAs are detected by using MiRXES's modified stem-looped reverse transcription-qualitative PCR (mSMRT-qPCR) platform ^[Too, H. P., & Anwar, A. B. (2017). U.S. Patent No. 9,850,527. Washington, DC: U.S. Patent and Trademark Office.]. The mSMRT-qPCR method uses a combination of a modified stem-loop oligonucleotide for reverse transcription (RT) and semi-nested PCR primers for interrogation of the synthesized complementary DNA (cDNA). The stem-loop structure of unique RT primers stabilizes RNA-DNA hybrid, thus increasing the RT efficiency for mature miRNA and allowing highly specific detection of mature miRNA with a large dynamic range of up to eight logs and a detection limit of sub-zeptomole per ml amounts of miRNA (10-100 molecules). MiRNA specific forward and reverse real-time PCR primers confer further specificity and enable robust amplification of amplicon.\
+376 miRNAs are detected by MiRXES's ID3EAL™ miRNA qPCR solution^[Heng-Phon, T., & Azlinda, A. (2013-01-30). Modified stem-loop oligonucleotide mediated reverse transcription and base-spacing constrained quantitative pcr.]. The ID3EAL™ miRNA qPCR solution uses a combination of a modified stem-loop oligonucleotide for reverse transcription (RT) and semi-nested PCR primers for interrogation of the synthesized complementary DNA (cDNA). The stem-loop structure of the unique RT primers stabilizes RNA-DNA hybrid, increasing efficiency in reverse-transcribing the mature miRNA. This allows highly specific detection of mature miRNAs over a large dynamic range of up to eight logs and a detection limit of zeptomole per ml amounts of miRNA (10-100 molecules). MiRNA-specific forward and reverse real-time PCR primers further confer assay specificity and enable robust amplification of amplicon.\
 
 The workflow comprises 3 main steps – RT, pre-amplification or augmentation (AUG), followed by qPCR. Extracted RNA from each sample is subjected to multiplexed RT in 4 RT pools – A, B, C, D – and the resulting cDNA samples from each RT pool is further divided into 2 multiplexed AUG reactions (RT pool A -> Aug A1 and A2, RT pool B -> Aug B1 and B2, etc) to enhance the amount of sample input for downstream qPCR analysis. Finally the augmented cDNA is pipetted into each well of the 384-well plate containing individual qPCR miRNA assays.
 
@@ -111,7 +111,7 @@ kableExtra::kbl(df.miss,
 source('scripts/step8_GlobalNorm.R')
 ```
 
-Global normalization ^[Mestdagh P, Van Vlierberghe P, De Weer A, Muth D, Westermann F, Speleman F, Vandesompele J. A novel and universal method for microRNA RT-qPCR data normalization. Genome Biol. 2009;10(6):R64. doi: 10.1186/gb-2009-10-6-r64. Epub 2009 Jun 16. PMID: 19531210; PMCID: PMC2718498.] is performed following spike-in normalization. A normalization constant is added to the Ct values for each miRNA in the sample so that the arithmetic mean Ct values of all the samples becomes identical.\
+Global normalization ^[Mestdagh, P., Van Vlierberghe, P., De Weer, A., Muth, D., Westermann, F., Speleman, F., & Vandesompele, J. (2009). A novel and universal method for microRNA RT-qPCR data normalization. Genome Biol, 10(6), R64.] is performed following spike-in normalization. A normalization constant is added to the Ct values for each miRNA in the sample so that the arithmetic mean Ct values of all the samples becomes identical.\
 
 \begin{equation}
 \tag{1}
@@ -369,7 +369,7 @@ source('scripts/step11_targetgene.R')
 ```
 
 ## Genes Targeted by Selected miRNA {.tabset .tabset-pills}
-miRNAs found differentially expressed between the sample groups (fold change \>= `r threshold.DE.dCt` and p-value =\< `r threshold.DE.pvalue`) are subjected to gene target analysis using mirTarBase ^[ H.-Y. Huang, Y.-C.-D. Lin, J. Li, K.-Y. Huang, S. Shrestha, H.-C. Hong, et al.]. A subset of the gene targets is shown below. For a list of all genes targeted by the differentially expressed miRNAs, please refer to the `target_gene_n.csv` file (where n is the comparison number).
+miRNAs found differentially expressed between the sample groups (fold change \>= `r threshold.DE.dCt` and p-value =\< `r threshold.DE.pvalue`) are subjected to gene target analysis using mirTarBase ^[ Huang, H.-Y., Lin, Y.-C.-D., Li, J., Huang, K.-Y., Shrestha, S., Hong, H.-C., Tang, Y., Chen, Y.-G., Jin, C.-N., Yu, Y., Xu, J.-T., Li, Y.-M., Cai, X.-X., Zhou, Z.-Y., Chen, X.-H., Pei, Y.-Y., Hu, L., Su, J.-J., Cui, S.-D., . . . Huang, H.-D. (2019). miRTarBase 2020: updates to the experimentally validated microRNA–target interaction database. Nucleic Acids Research, 48(D1), D148-D154.]. A subset of the gene targets is shown below. For a list of all genes targeted by the differentially expressed miRNAs, please refer to the `target_gene_n.csv` file (where n is the comparison number).
 
 ### `r if('Comparison 1' %in% comparisons) {comparisons[1]}` {.unnumbered}
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
@@ -431,7 +431,7 @@ if('Comparison 3' %in% comparisons) {
 `r description`
 
 
-## GO Enrichment Analysis ^[Alexa A, Rahnenfuhrer J (2022). _topGO: Enrichment Analysis for Gene Ontology_. R package version 2.48.0.] {.tabset .tabset-pills} 
+## GO Enrichment Analysis ^[Alexa A, Rahnenfuhrer J (2022). topGO: Enrichment Analysis for Gene Ontology. R package version 2.48.0.] {.tabset .tabset-pills} 
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
 source('scripts/step12_go.R')
 ```
