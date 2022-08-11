@@ -1,0 +1,120 @@
+h1.title {
+    color: #001F36;
+    font-family: Arial;
+    font-weight: bold;
+}
+
+h1 {
+    color: #001F36;
+    font-family: Arial;
+    font-weight: bold;
+    
+}
+
+h2, h3, h4, h5, h6, legend{
+    color:  #00AFB5;
+    font-family: Arial;
+}
+
+#sidebar {
+    background: #000000;
+}
+
+#sidebar h2 {
+    background-color: #001F36;
+    background-image: url('logo.png');
+    background-repeat: no-repeat;
+    background-position: 50% 10px;
+    background-size: 80%;
+    
+    font-family: Arial;
+    
+    line-height: 44px;
+    font-size: 100%;
+    
+    padding-top: 5.3em;
+    padding-bottom: 0.809em;
+}
+
+#postamble {
+    background: #001F36;
+    border-top-color: #00AFB5;
+}
+
+#nav-top span.glyphicon {
+  color: #001F36;
+  font-size: 28px;
+}
+
+a:link{
+    color: #FF8F59;
+}
+
+a:visited {
+    color: #00AFB5;
+}
+
+a:hover {
+    color:white;
+    background-color: #001F36;
+}
+
+#main .nav-pills > li > a {
+    background-color: #fff;
+}
+
+#main .nav-pills > li > a:hover {
+    background-color: #00C7C9;
+}
+
+
+#main .nav-pills > li.active > a {
+    background-color: #001F36;
+}
+
+#main .nav-pills > li.active > a:hover {
+    background-color: #00C7C9;
+}
+
+#main .nav-pills > li.active > a:focus {
+    background-color: #DB4A08;
+}
+
+#main :not(.leaflet-control) > a {
+    color: #001F36;
+}
+
+#main table:not(.dataTable) thead th {
+    background-color: #001F36;
+    color: white;
+    border: 0px;
+    font-family: Arial;
+}
+
+#main table:not(.dataTable) tbody td {
+    border: 0px;
+}
+
+table:not(.dataTable) tr:nth-child(2n-1) {
+    background-color: #FFF;
+}
+
+table:not(.dataTable) tr:nth-child(2n) {
+    background-color: #ABB5BD;
+}
+
+code {
+    background: #546B78;
+    border: 0px;
+    color: #fff;
+}
+
+body{
+    color: black;
+    font-family: Arial;
+}
+
+.csl-entry {
+    padding-bottom: 0.5em;
+}
+
