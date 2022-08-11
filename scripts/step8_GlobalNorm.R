@@ -32,6 +32,7 @@ for (i in 1:num.sample) {
 # Visualization: miRNA Distribution
 # ---------------------------------- #
 fun.plot.violin = function(comp, cols) {
+    ls.violin = list()
     # Data frame recording the Sample and Comparison Group
     df.compare = ls.compare.group[[comp]]
     groupA.sample = df.compare$Samples[df.compare[, 2] == "A"]
@@ -76,7 +77,7 @@ fun.plot.violin = function(comp, cols) {
         theme(axis.text.x = element_text(angle = 270, hjust = 1, vjust = 0.5)) +
         scale_fill_manual(values = alpha(cols, 0.5)) +
         ylab("Ct Values") +
-        ggtitle(paste0("miRNA Expression Levels in Each Samples ( ", comp, " )"))
+        ggtitle(paste0("miRNA Expression Level ( ", comp, " )"))
 
     fig.violin = df.tmp.melt %>%
         plot_ly(x = ~ sample,
@@ -93,9 +94,9 @@ fun.plot.violin = function(comp, cols) {
                                          ')')),
                xaxis = list(title = 'sample', tickangle = 90),
                yaxis = list(title = 'Ct Values', zeroline = F))
-    
-
-    return(fig.violin)
+    ls.violin$ggplot = p.violin
+    ls.violin$plotly = fig.violin
+    return(ls.violin)
 }
 
 # Save Results

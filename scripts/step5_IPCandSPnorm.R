@@ -92,7 +92,7 @@ if(arg.pipeline != 'PanoramiR') {
     tmp = as.data.frame(df.input.data.IPC.norm)
     colnames(tmp)[-c(1,2)] = paste('sample', colnames(tmp)[-c(1,2)])
     
-    write_xlsx(tmp, file.path(dir.out.tbl, 'Data IPCnorm.xlsx'))
+    write.csv(tmp, file.path(dir.out.tbl, 'Data IPCnorm.csv'))
     
 } else {df.input.data.IPC.norm = df.input.data.Filt1}
 
@@ -169,7 +169,7 @@ if(is.RTsp) {
         dplyr::select('sample', 'status', 'max.SP', tmp.colname)
     
     # Save results
-    write_xlsx(SP.sum, file.path(dir.out.tbl, 'SP_Check_Summary.xlsx'))
+    write.csv(SP.sum, file.path(dir.out.tbl, 'SP_Check_Summary.csv'))
 
     # Remove samples based on SP.sum
     remove.sample = SP.sum$sample[SP.sum$status == 'exclude'] %>% as.numeric()

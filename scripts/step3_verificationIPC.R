@@ -58,8 +58,8 @@ IPC.sum = IPC.sum %>%
     dplyr::mutate(sample = rownames(IPC.sum)) %>%
     dplyr::select('sample', 'max.IPC', 'status', tmp.colname)
 
-write_xlsx(IPC.sum, 
-           file.path(dir.out.tbl, 'IPC_Check_Summary.xlsx'))
+write.csv(IPC.sum, 
+           file.path(dir.out.tbl, 'IPC_Check_Summary.csv'))
 
 
 # Whether later analysis is applicable, Error conditions below

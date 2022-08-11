@@ -62,10 +62,15 @@ fun.targetGene = function(ls.diff) {
         }
         rownames(df.miRNA2gene.show) = NULL
         
+        # if (nrow(df.miRNA2gene.show) <= 15) {
+        #     df.miRNA2gene.show = df.miRNA2gene.show
+        # } else {
+        #     df.miRNA2gene.show = df.miRNA2gene.show[1:15, ]
+        # }
+        
         ls.miRNA2gene$miRNA2gene.sig = miRNA2gene.sig # Save
         ls.miRNA2gene$symbol.pvalue  = symbol.pvalue  # For GO enrichment
         ls.miRNA2gene$miRNA2gene.show = df.miRNA2gene.show # For Report
     }
-    
     return(ls.miRNA2gene)
 }

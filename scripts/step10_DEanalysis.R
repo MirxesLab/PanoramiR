@@ -55,6 +55,7 @@ fun.DEanalysis.Ttest = function(comp) {
     ls.diff = list()
     
     # Group A is the test sample, Group B is the control sample
+    # dCt = ctrl - exp dCt < 0: downregulated; dCt > 0: upregulated
     df.compare = ls.compare.group[[comp]]
     groupA.sample = df.compare$Samples[df.compare[comp] == 'A']
     groupB.sample = df.compare$Samples[df.compare[comp] == 'B']
@@ -67,7 +68,7 @@ fun.DEanalysis.Ttest = function(comp) {
     df.summary   = dplyr::inner_join(df.summary.A,
                                      df.summary.B,
                                      by = 'miRNA')
-    dCt = df.summary$mean.A - df.summary$mean.B
+    dCt = df.summary$mean.B - df.summary$mean.A
     
     num.miRNA = nrow(df.input.data.GlobalNorm)
     pvalue = c() # Student's T test
@@ -109,87 +110,7 @@ fun.DEanalysis.Ttest = function(comp) {
     
     return(ls.diff)
 }
-fun.DEanalysis.Utest = function(comp) {
-    ls.diff = list()
-    
-    # Group A is the test sample, Group B is the control sample
-    df.compare = ls.compare.group[[comp]]
-    groupA.sample = df.compare$Samples[df.compare[comp] == 'A']
-    groupB.sample = df.compare$Samples[df.compare[comp] == 'B']
-    
-    df.miRNA.A = df.input.data.GlobalNorm[, c('miRNA', groupA.sample)]
-    df.miRNA.B = df.input.data.GlobalNorm[, c('miRNA', groupB.sample)]
-    
-    df.summary.A = fun.summary(df.miRNA.A, 'A')
-    df.summary.B = fun.summary(df.miRNA.B, 'B')
-    df.summary   = dplyr::inner_join(df.summary.A,
-                                     df.summary.B,
-                                     by = 'miRNA')
-    
-    dCt = df.summary$mean.A - df.summary$mean.B
-    
-    
-    # test.norm.dis.A = c()
-    # test.norm.dis.B = c()
-    # 
-    # for (i in miRNA) {
-    #     pvalue = shapiro.test(df.miRNA.A[df.miRNA.A$miRNA == i, -1] %>%as.numeric())
-    #     pvalue = pvalue$p.value
-    #     test.norm.dis.A = append(test.norm.dis.A, pvalue)
-    # }
-    # 
-    # for (i in miRNA) {
-    #     pvalue = shapiro.test(df.miRNA.B[df.miRNA.B$miRNA == i, -1] %>%as.numeric())
-    #     pvalue = pvalue$p.value
-    #     test.norm.dis.B = append(test.norm.dis.B, pvalue)
-    # }
-    # index.A = which(test.norm.dis.A<0.05)
-    # index.B = which(test.norm.dis.B<0.05)
-    
-    miRNA = df.input.data.GlobalNorm$miRNA
-    pvalue = c()
-    for(i in miRNA) {
-        A = df.miRNA.A[df.miRNA.A$miRNA == i, -1] %>% as.numeric()
-        B = df.miRNA.B[df.miRNA.B$miRNA == i, -1] %>% as.numeric()
-        p.tmp = wilcox.test(A, B, paired = FALSE, exact = TRUE)
-        p.tmp = p.tmp$p.value
-        names(p.tmp) = i
-        pvalue = append(pvalue, p.tmp)
-    }
-    
-    adj.pvalue = p.adjust(pvalue, method = 'BH')
-    
-    df.res.ori = df.summary %>%
-        dplyr::mutate(dCt    = dCt %>% round(2),
-                      pvalue = pvalue[df.summary$miRNA] %>% round(5),
-                      adj.pvalue = adj.pvalue[df.summary$miRNA] %>% round(5))
 
-    df.res.order = df.res.ori[order(df.res.ori$adj.pvalue, 
-                                    df.res.ori$pvalue, 
-                                    decreasing = FALSE), ]
-    rownames(df.res.order) = NULL
-    
-    # Filter based on p value and dCt
-    df.res.filter = df.res.order %>%
-        dplyr::filter(adj.pvalue <= threshold.DE.pvalue & abs(dCt) >= threshold.DE.dCt)
-    fdr = TRUE
-    
-    if(nrow(df.res.filter) == 0) {
-        df.res.filter = df.res.order %>%
-            dplyr::filter(pvalue <= threshold.DE.pvalue & abs(dCt) >= threshold.DE.dCt)
-        fdr = FALSE
-    }
-    rownames(df.res.filter) = NULL
-    
-    
-    ls.diff$groupA     = df.miRNA.A
-    ls.diff$groupB     = df.miRNA.B
-    ls.diff$res.order  = df.res.order
-    ls.diff$res.filter = df.res.filter
-    ls.diff$fdr        = fdr
-    
-    return(ls.diff)
-} # remove
 fun.DEanalysis.limma = function(comp) {
     ls.diff = list()
     
@@ -213,8 +134,10 @@ fun.DEanalysis.limma = function(comp) {
     # contrast matrix
     design = model.matrix(~ 0 + meta$condition)
     colnames(design) = c('A', 'B')
-    contrast_martix = makeContrasts(compare = A - B,
+    contrast_martix = makeContrasts(compare = B - A,
                                     levels = design)
+    df.miRNA = df.input.data.GlobalNorm %>%
+        tibble::column_to_rownames('miRNA')
     
     # DE analysis with limma
     fit = lmFit(df.miRNA, design)
@@ -268,7 +191,7 @@ fun.plot.dCt    = function(ls.diff, comp) {
     }
 
     
-    df.tmp = df.tmp[order(df.tmp$dCt, decreasing = FALSE), ]
+    df.tmp = df.tmp[order(df.tmp$dCt, decreasing = TRUE), ]
     df.tmp$miRNA = factor(df.tmp$miRNA, levels = df.tmp$miRNA)
     
     if(length(df.tmp$miRNA) > 40) {
@@ -306,7 +229,7 @@ fun.plot.scatter = function (ls.diff, comp) {
                                        TRUE ~ 'ns'))
     
     p.scatter = ggplot(data = df.tmp,
-                       aes(x = mean.B, y = mean.A, color = type, label = miRNA)) +
+                       aes(x = mean.A, y = mean.B, color = type, label = miRNA)) +
         geom_point(size = 1) +
         geom_abline(slope = 1, intercept = 0, color = col.grey) + 
         geom_abline(slope = 1, intercept = threshold.DE.dCt, color = col.others[1]) +
@@ -314,8 +237,8 @@ fun.plot.scatter = function (ls.diff, comp) {
         theme_classic() +
         scale_color_manual(values = cols.DE,
                            breaks = c("up", "down", "ns")) +
-        labs(x = "Control Ct value", 
-             y = "Treatment Ct value",
+        labs(x = "Treatment Ct value", 
+             y = "Control Ct value",
              title = paste0(comp, ', dCt cut-off = ', threshold.DE.dCt)) +
         theme_classic() +
         theme(legend.position = "top")
@@ -356,15 +279,34 @@ fun.plot.volcano = function(ls.diff, comp) {
 }
 
 
-# Check with Jeremy
-# excel.result = read_excel('tmp/Cancer384_v3.1.xlsx', 'Results', skip = 1)
-# colnames(excel.result)
+# # check
+# ls.diff.1.ttest = fun.DEanalysis.Ttest('Comparison 1')
+# ls.diff.1.limma = fun.DEanalysis.limma('Comparison 1')
 # 
-# excel.result = excel.result[, c('miRNA ID', 'p value')]
-# colnames(excel.result) = c('miRNA', 'excel.value')
+# ls.diff.1.ttest$res.filter %>% write_xlsx('tmp/ttest.PanoramiR.xlsx')
+# ls.diff.1.limma$res.filter %>% write_xlsx('tmp/limma.PanoramiR.xlsx')
 # 
-# check.excel = inner_join(df.res.ori, excel.result, by = 'miRNA')
-# check.excel
-# diff.1 = mean(check.excel$pvalue - check.excel$excel.value, na.rm = TRUE)
-# diff.2 = mean(check.excel$adj.pvalue - check.excel$excel.value, na.rm = TRUE)
-# write_xlsx(check.excel, 'tmp/checkpvalue.xlsx')
+# all.ttest = ls.diff.1.ttest$res.order
+# all.limma = ls.diff.1.limma$res.order
+# res.ttest = ls.diff.1.ttest$res.filter
+# res.limma = ls.diff.1.limma$res.filter
+# 
+# miRNA = df.input.data.GlobalNorm[df.input.data.GlobalNorm$miRNA %in% res.limma$miRNA, ]
+# 
+# # diff.ttest = all.ttest[all.ttest$miRNA %in% diff$miRNA, ]
+# # 
+# # 
+# # test.limma = all.limma[all.limma$miRNA %in% a, ] %>% write_xlsx('tmp/test.xlsx')
+# # 
+# # all.ttest[all.ttest$miRNA == 'hsa-miR-181c-3p', ]
+# # A = df.input.data.GlobalNorm[df.input.data.GlobalNorm$miRNA == 'hsa-miR-495-3p', c(2:4)] %>% as.numeric()
+# # B = df.input.data.GlobalNorm[df.input.data.GlobalNorm$miRNA == 'hsa-miR-495-3p', c(5:7)] %>% as.numeric()
+# # mean(A) - mean(B)
+# # 
+#  filter.1 = res.ttest$sd.A - res.ttest$sd.B
+#  filter.2 = res.limma$sd.A - res.limma$sd.B
+# 
+# df.sd = data.frame(sd = filter.1, group = 't-test') %>%
+#     rbind(data.frame(sd = filter.2, group = 'limma'))
+# ggplot(df.sd, aes(x = group, y = sd, fill = group))+
+#     geom_boxplot()

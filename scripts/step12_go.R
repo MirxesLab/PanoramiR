@@ -40,19 +40,23 @@ fun.GOenrich = function(ls.miRNA2gene, ont) {
     
     if (num.node == 0) {
         ls.GOres = NA       # based on the threshold, no GO term is found
-    } else if (num.node < 10) {
+    } else if (num.node < GO.nodesize ) {
         res.show = GenTable(GOdata,
                             classicFisher = classicfisher,
                             topNodes = num.node)
         res.show$`GO Term` = rep(ont, num.node)
         colnames(res.show)[6] = 'pvalue'
+        res.show = res.show %>% 
+            dplyr::select('GO.ID', 'Term', 'pvalue', 'GO Term')
         
     } else {
         res.show = GenTable(GOdata,
                             classicFisher = classicfisher,
-                            topNodes = 10)
-        res.show$`GO Term` = rep(ont, 10)
+                            topNodes = GO.nodesize )
+        res.show$`GO Term` = rep(ont, GO.nodesize )
         colnames(res.show)[6] = 'pvalue'
+        res.show = res.show %>% 
+            dplyr::select('GO.ID', 'Term', 'pvalue', 'GO Term')
     }
     
     # Data frame for output (all GO terms)
