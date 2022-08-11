@@ -26,9 +26,29 @@ knitr::opts_chunk$set(echo = FALSE,
 source('scripts/config.R')           
 source('scripts/step1_ReadInSamplesheet.R')
 source('scripts/step2_ReadInRawData.R') 
-arg.pipeline = 'Cancer'
 ```
 
+```{r}
+# If it is the basic tier, no report generated
+if(is.basic) {
+    source('scripts/step3_verificationIPC.R')
+    if(stop) {
+        knitr::knit_exit()
+    }
+    source('scripts/step4_Round1Filter.R')
+    
+    source('scripts/step5_IPCandSPnorm.R')
+    if(stop) {
+        knitr::knit_exit()
+    }
+    
+    source('scripts/step6_Round2Filter.R')
+    source('scripts/step7_Imputation.R')
+    source('scripts/step8_GlobalNorm.R')
+
+    knitr::knit_exit()
+}
+```
 
 # Introduction
 MicroRNAs (miRNAs), a group of small non-coding RNAs, are found in many species of eukaryotes. MiRNAs regulate gene expression at the post-transcriptional level in the cells and mediate intercellular communications when secreted into the local milieu or circulation. Dysregulation of miRNAs are implicated in pathologies of many human diseases, including cancer, cardiovascular disease and other chronic diseases [@RN6] , where they function as signalling messengers to mediate cell-cell communication [@RN2] . Therefore, miRNAs hold great promise as biomarkers of human diseases [@RN3].

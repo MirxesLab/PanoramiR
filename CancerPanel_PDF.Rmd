@@ -39,7 +39,7 @@ knitr::opts_chunk$set(echo = FALSE,
 source('scripts/config.R')           
 source('scripts/step1_ReadInSamplesheet.R')
 source('scripts/step2_ReadInRawData.R') 
-arg.pipeline = 'Cancer'
+
 ```
 
 
