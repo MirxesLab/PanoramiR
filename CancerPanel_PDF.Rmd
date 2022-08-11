@@ -1,0 +1,627 @@
+---
+title: "Cancer miRNA Assay Panel Analysis Report"
+author: "MiRXES Lab"
+date: "`r Sys.Date()`"
+output:
+    pdf_document:
+        toc: true
+        toc_depth: 2
+        number_section: true
+        fig_caption: true
+        fig_width: 5
+        fig_height: 4
+        latex_engine: xelatex
+        template: resources/template.tex
+documentclass: article
+mainfont: Times New Roman
+papersize: a4
+linestretch: 1.5
+fontsize: 12pt
+hyperrefoptions: linktoc=all
+geometry: margin=1in
+bibliography: resources/bibliography.bibtex
+---
+
+\let\oldsection\section
+\renewcommand\section{\clearpage\oldsection}
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE,
+                      warning = FALSE,
+                      message = FALSE,
+                      fig.align = 'center',
+                      fig.pos = 'H')
+```
+
+
+```{r}
+# Preparation
+source('scripts/config.R')           
+source('scripts/step1_ReadInSamplesheet.R')
+source('scripts/step2_ReadInRawData.R') 
+arg.pipeline = 'Cancer'
+```
+
+
+# Introduction
+MicroRNAs (miRNAs), a group of small non-coding RNAs, are found in many species of eukaryotes. MiRNAs regulate gene expression at the post-transcriptional level in the cells and mediate intercellular communications when secreted into the local milieu or circulation. Dysregulation of miRNAs are implicated in pathologies of many human diseases, including cancer, cardiovascular disease and other chronic diseases [@RN6], where they function as signalling messengers to mediate cell-cell communication [@RN2]. Therefore, miRNAs hold great promise as biomarkers of human diseases [@RN3].
+
+MiRNA expression analysis is an invaluable tool for biomarker development, which can provide important insights into the underlying mechanisms of disease development. MiRNA expression profiles can be translated into early diagnosis, risk stratification, as well as therapeutic management tools. MiRXES scientists and their collaborators have analyzed miRNAs in over 50,000 different samples across more than 20 different diseases and conditions using proprietary and patented qPCR technology. Based on extensive experience in the field of miRNA detection and analysis, MiRXES can offer a proven microRNA technology platform which can translate microRNA research into clinical applications, from biomarker discovery and validation to product development. 
+
+**MiRXES' Cancer miRNA Assay Panel** is meant to enable researchers to quickly and reliably screen large number of cancer related miRNAs to identify candidates of interest in their respective cell, animal models or in clinical specimen. Individual miRNA assays and customized panels are available to validate the dysregulation and interrogate the functions of candidates in greater details.
+
+# Workflow Overview
+352 miRNAs are detected by MiRXES's ID3EAL™ miRNA qPCR solution [@RN4].
+
+\begin{minipage}{0.5\textwidth}
+The ID3EAL™ miRNA qPCR solution uses a combination of a modified stem-loop oligonucleotide for reverse transcription (RT) and semi-nested PCR primers for interrogation of the synthesized complementary DNA (cDNA). The stem-loop structure of the unique RT primers stabilizes RNA-DNA hybrid, increasing efficiency in reverse-transcribing the mature miRNA. This allows highly specific detection of mature miRNAs over a large dynamic range of up to eight logs and a detection limit of zeptomole per ml amounts of miRNA (10-100 molecules). MiRNA-specific forward and reverse real-time PCR primers further confer assay specificity and enable robust amplification of amplicon.
+\end{minipage}
+\begin{minipage}{0.5\textwidth}
+```{r fig.align='center', out.width='100%', fig.cap='ID3EAL™ miRNA qPCR solution'}
+knitr::include_graphics(png.mSMRT.qPCR)
+```
+
+\end{minipage}
+       \
+The workflow comprises 2 main steps – reverse transcription (RT) and real-time qPCR amplification & detection. Extracted RNA from each sample is subjected to multiplexed RT in 4 RT pools – A, B, C, D – and the resulting cDNA samples from each RT pool is pipetted into each well of the four 96-well ID3EAL™ Panel plates containing pre-loaded qPCR primers and inter-plate controls.
+
+```{r fig.cap="ID3EAL PanoramiR miRNA Panel Workflow Overview", out.width='100%'}
+knitr::include_graphics(png.workflow)
+```
+
+
+# Pre-processing of Data
+
+## Verification of Inter Plate Control (IPC)
+IPCs are DNA template that is run 4 times for each cDNA pool. First check the standard deviation of Cts of IPCs for each cDNA pool; Standard deviation greater than 0.5 indicates pipetting error, and caution should be taken when interpreting results. IPC can be used as positive controls for qPCR process. **If IPC has Ct value greater than 25, it indicates qPCR reaction has failed**, and corresponding samples are removed (Please refer to the `IPC_Check_Summary.xlsx` for details). Secondly, IPC can be used to normalize plate to plate variation. Due to machine variations, Ct values from different machines are not directly comparable. Use IPCs to normalize the machine to machine variation as IPCs will have the same Ct value across machines if the machine variation is eliminated.
+```{r}
+source('scripts/step3_verificationIPC.R')
+if(stop) {
+    knitr::knit_exit()
+}
+```
+`r description`
+
+```{r}
+source('scripts/step4_Round1Filter.R')
+```
+
+
+## Spike-in Normalization
+miRNA spike-ins are uniquely designed small RNAs (~22 nt ) with sequences distinct from endogenous human miRNAs. These miRNA spike-ins have been extensively tested and are compatible with various isolation methods, including phenol/chloroform, phenol free, membrane, bead and precipitation based methods, provided the method retains the small RNA fraction. The use of miRNA spike-ins can monitor and normalize experimental variations in sample RNA isolation, reverse transcription and qPCR.
+
+The miRNA spike-ins can be used in two modes: \
+1. As RNA isolation control. miRNA spike-ins are added to sample lysis buffer or RNA isolation buffer before mixing with biological sample. A difference in the measured levels of miRNA spike-ins indicates varying RNA isolation yield and/or RNA purity. When used in RNA isolation, the RNA input volume to RT should be taken into consideration before spike-in Cts are used to calculate a normalization factor.
+
+2.As reverse transcription control. miRNA spike-ins are added to RT master mix. Measured levels of miRNA spike ins allow normalization between RT reactions to detect inconsistencies between samples e.g. presence of RT-qPCR inhibitors in some samples. **If RT spike-in has Ct value greater than 30, it indicates RT reaction has failed**, and corresponding samples are removed (Please refer to the `SP_Check_Summary.xlsx` for details).
+
+The Ct values of targeted miRNA are first normalized by miRNA spike-ins. Each sample has 4 miRNA spike-ins Ct corresponding to each RT group (A, B, C, and D). For each RT group in one sample, four Spike-in Ct values of that group is used to calculate a spike-in factor which is added to Ct values of corresponding miRNAs in the sample. For the specific calculation method, please refer to the formula below.
+
+For group $i$ in sample $j$ 
+
+\begin{equation}
+\tag{1}
+Avg.SP_{i,j} = \frac{Ct.SP_{i,j,1} + Ct.SP_{i,j,2} + Ct.SP_{i,j,3}, Ct.SP_{i,j,4}}{4} \\
+\end{equation}
+
+\begin{equation}
+\tag{2}
+Avg.SP_{j} = \frac{\sum_{i = 1}^{n_{sample}}Avg.SP_{i,j}}{n_{sample}}
+\end{equation}
+
+\begin{equation}
+\tag{3}
+SP.Factor_{i,j} = Avg.SP_{i,j} - Avg.SP_{j}
+\end{equation}
+
+1. $Avg.SP_{i,j}$ is the average Ct value for spike-ins in group $i$ of sample $j$. ($i$ = A, B, C, D; $j$ = 1, 2, ... $n$, $n$ = number of samples)
+
+2. $Avg.SP_{j}$ is the average Ct value for group $i$ of all samples. ($i$ = A, B, C, D)
+
+3. $SP.Factor_{i,j}$ is the spike-in factor for target miRNAs of group $i$ in sample $j$. 
+
+```{r}
+source('scripts/step5_IPCandSPnorm.R')
+if(stop) {
+    knitr::knit_exit()
+}
+```
+`r description`
+
+```{r}
+source('scripts/step6_Round2Filter.R')
+```
+
+## Missing Value Imputation
+```{r}
+source('scripts/step7_Imputation.R')
+```
+
+### Number of miRNA Detected in Samples
+After spike-in normalization, miRNAs in each groups with Ct value less than `r cutoff.sp` are selected for later analysis; Ct value > `r cutoff.sp` is considered as non-detect. Expression figures below shows the overview information of detected miRNAs in each samples.
+```{r fig.cap= "Number of miRNA Detected in Samples"}
+p.num.miRNA
+```
+
+### Number of miRNA for Later Analysis
+The miRNAs with missing values in more than 10% (> 10%) of the total number of samples are not analysed. Else, the missing values are imputed by the highest Ct value across the samples.\
+
+```{r}
+kableExtra::kbl(df.miss,
+                format = 'latex',
+                booktabs = TRUE,
+                caption = "Number of missing value of miRNAs acorss samples",
+                col.names = gsub("[.]", " ", names(df.miss))) %>%
+  kable_styling(latex_options = c("striped", "HOLD_position"),   stripe_color = "gray!15") %>%
+    footnote(general = 'Tolerable missing values across samples are no more than 10% number of samples')
+```
+
+## Global Normalization
+```{r}
+source('scripts/step8_GlobalNorm.R')
+```
+
+Global normalization [@RN8] is performed following spike-in normalization. A normalization constant is added to the Ct values for each miRNA in the sample so that the arithmetic mean Ct values of all the samples becomes identical.\
+
+\begin{equation}
+\tag{1}
+Avg_{sample.i} = \frac{\sum_{i = 1}^{n_{miRNA}} Ct_{i}}{n_{miRNA}}
+\end{equation}
+
+\begin{equation}
+\tag{2}
+Avg_{all} = \frac{\sum_{i = 1}^{n_{sample}} Avg_{sample,i}}{n_{sample}}
+\end{equation}
+
+\begin{equation}
+\tag{2}
+Global.Factor_i = Avg_{all} - Avg_{sample,i}
+\end{equation}
+
+1. $Avg_{sample.i}$ is the average Ct values for sample $i$ ($n_{miRNA}$ is the number of miRNA in sample $i$)
+2. $Avg_{all}$ is the average Ct values for all samples ($n_{sample}$ is the number of samples)
+3. $Global.Factor_i$ is the correction factor of sample $i$ for global normalization.
+
+## Detected miRNA Expression Level in Each Samples
+Figure below shows the miRNA expression level in each sample. Values have been filtered based on Ct value threshold (`r cutoff.max`) and then spike-in and global normalized.
+
+
+```{r fig.cap= "miRNA Ct values distribution of samples (Comparison 1)"}
+if ("Comparison 1" %in% comparisons) {
+  ls.violin.1 = fun.plot.violin('Comparison 1', col.compare.1)
+  ls.violin.1$ggplot
+}
+```
+
+```{r fig.cap= "miRNA Ct values distribution of samples (Comparison 2)"}
+if ("Comparison 2" %in% comparisons) {
+  ls.violin.2 = fun.plot.violin('Comparison 2', col.compare.2)
+  ls.violin.2$ggplot
+}
+```
+
+
+```{r fig.cap= "miRNA Ct values distribution of samples (Comparison 3)"}
+if ("Comparison 3" %in% comparisons) {
+  ls.violin.3 = fun.plot.violin('Comparison 3', col.compare.3)
+  ls.violin.3$ggplot
+}
+```
+
+
+# MiRNAs Overview
+Unsupervised learning methods such as principal component analysis and clustering reduce the dimensions of the underlying differences among samples, allowing separation of observations with distinct differences. This scale of separation is often observed when there is an overall large difference among comparison groups, such as when the analysis is performed on diseased and healthy tissue samples. However, this is often not observed when the analysis is performed on blood samples, for that the miRNAs from diseased cells often represent only a minute fraction of the miRNAs content in the blood. Therefore, for blood sample, the outcome of unsupervised learning methods is expectedly to show no distinction in the observations among the comparison groups, and warrants further investigation on sample quality if clear distinction is observed.
+
+```{r}
+source('scripts/step9_OverviewInfo.R')
+```
+
+## Principal Component Analysis 
+Principal component analysis is performed on the normalized miRNA expression data to determine if there are any strong underlying patterns. PCA analysis for different comparisons is plotted respectively.
+
+```{r fig.cap = 'PCA analysis for Comparison 1'}
+if('Comparison 1' %in% comparisons) {
+  p.pca.1 = fun.pca('Comparison 1', col.compare.1)
+  p.pca.1
+}
+```
+
+```{r fig.cap = 'PCA analysis for Comparison 2'}
+if('Comparison 2' %in% comparisons) {
+  p.pca.2 = fun.pca('Comparison 2', col.compare.2)
+  p.pca.2
+}
+```
+
+```{r fig.cap = 'PCA analysis for Comparison 3'}
+if('Comparison 3' %in% comparisons) {
+  p.pca.3 = fun.pca('Comparison 3', col.compare.3)
+  p.pca.3
+}
+```
+
+## Hierachical Clustering Analysis 
+Hierarchical clustering is performed on the normalized miRNA expression data to group clusters of similar miRNA expression together.
+
+```{r fig.cap='Clustergram analysis', out.width='80%'}
+p.heatmap.all = fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all)
+```
+
+```{r fig.cap='Sample-to-sample distance', out.width='80%'}
+p.heatmap.s2s = pheatmap(sample.dist.matrix,
+                         clustering_distance_row = sample.dist,
+                         clustering_distance_col = sample.dist,
+                         col = colors.heatmap,
+                         annotation_colors = color.anno.all,
+                         annotation_col = df.anno.all,
+                         annotation_names_col = FALSE,
+                         main = "Euclidean distance of samples")
+```
+
+
+# Differential Expression Analysis 
+
+```{r}
+source('scripts/step10_DEanalysis.R')
+```
+
+## Differentially expressed miRNA 
+The top 10 miRNAs having the smallest p value between the sample groups are listed in the table below. dCt of each miRNA is expressed as the mean Ct value of that in Group A minus the mean Ct value of that in Group B. Statistical significance for each dCt is expressed as FDR corrected p-values.
+
+
+```{r}
+if("Comparison 1" %in% comparisons) {
+    ls.diff.1 = fun.DEanalysis.Ttest('Comparison 1')
+
+    
+    kbl(ls.diff.1$res.order[1:10, ],
+        caption = "10 miRNA with smallest p value in Comparison 1",
+        digits = 3,
+        format = 'latex',
+        booktabs = TRUE,
+        linesep = "") %>%
+        kable_styling(latex_options = c("striped", "HOLD_position"), 
+                        
+                      stripe_color = "gray!15") 
+}
+```
+
+
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if("Comparison 2" %in% comparisons) {
+    ls.diff.2 = fun.DEanalysis.Ttest('Comparison 2')
+    
+    kbl(ls.diff.2$res.order[1:10, ],
+        caption = "10 miRNA with smallest p value in Comparison 2",
+        digits = 3,
+        format = 'latex',
+        booktabs = TRUE,
+        linesep = '') %>%
+        kable_styling(latex_options = c("striped", "HOLD_position"), 
+                        
+                      stripe_color = "gray!15") 
+}
+```
+
+
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if("Comparison 3" %in% comparisons) {
+    ls.diff.3 = fun.DEanalysis.Ttest('Comparison 3')
+    
+    kbl(ls.diff.3$res.order[1:10, ],
+        caption = "10 miRNA with smallest p value in Comparison 3",
+        digits = 3,
+        format = 'latex',
+        booktabs = TRUE,
+        linesep = '') %>%
+        kable_styling(latex_options = c("striped", "HOLD_position"), 
+                        
+                      stripe_color = "gray!15")
+}
+```
+
+
+## Scatter Plot 
+Figures below show the dCt value between treatment and control group. The red points represent miRNA whose dCt greater than or equal to 1, and the blue points represent miRNA whose dCt less than or equal to 1. \
+
+
+```{r fig.cap="Scatter Plot for Comparison 1"}
+if('Comparison 1' %in% comparisons) {
+    p.scatter.1 = fun.plot.scatter(ls.diff.1, 'Comparison 1')
+    p.scatter.1
+}
+```
+
+
+```{r fig.cap="Scatter Plot for Comparison 2"}
+if('Comparison 2' %in% comparisons) {
+    p.scatter.2 = fun.plot.scatter(ls.diff.2, 'Comparison 2')
+    p.scatter.2
+}
+```
+
+
+```{r fig.cap="Scatter Plot for Comparison 3"}
+if('Comparison 3' %in% comparisons) {
+    p.scatter.3 = fun.plot.scatter(ls.diff.3, 'Comparison 3')
+    p.scatter.3
+}
+```
+
+## Waterfall plot 
+The waterfall plot displays statistically significant (p < `r threshold.DE.pvalue`) dCt values between the treatment and control groups. The red bars represent miRNA whose dCt greater than or equal to `r threshold.DE.dCt`, and the blue bars represent miRNA whose dCt less than or equal to `r threshold.DE.dCt`.
+
+
+```{r fig.cap='Bar plot for Comparison 1'}
+if('Comparison 1' %in% comparisons) {
+    p.bar.dCt.1 = fun.plot.dCt(ls.diff.1, 'Comparison 1')
+    p.bar.dCt.1
+}
+```
+
+
+```{r fig.cap='Bar plot for Comparison 2'}
+if('Comparison 2' %in% comparisons) {
+    p.bar.dCt.2 = fun.plot.dCt(ls.diff.2, 'Comparison 2')
+    p.bar.dCt.2
+}
+```
+
+
+```{r fig.cap='Bar plot for Comparison 3'}
+if('Comparison 3' %in% comparisons) {
+    p.bar.dCt.3 = fun.plot.dCt(ls.diff.3, 'Comparison 3')
+    p.bar.dCt.3
+}
+```
+
+## Volcano Plot 
+The relative expression of each miRNA is summarised in the volcano plot shown below. ‘Sig. up’ refers to the miRNAs showing a relative expression of more than `r threshold.DE.dCt` dCt and a p-value of less than `r threshold.DE.pvalue`. ‘Sig. down’ refers to the miRNAs showing a relative expression of less than `r threshold.DE.dCt` dCt and a p-value of less than `r threshold.DE.pvalue`.
+
+
+```{r fig.cap='Volcano plot for Comparison 1'}
+if ('Comparison 1' %in% comparisons) {
+    p.volcano.1 = fun.plot.volcano(ls.diff.1, 'Comparison 1')
+    p.volcano.1
+}
+```
+
+```{r fig.cap='Volcano plot for Comparison 2'}
+if ('Comparison 2' %in% comparisons) {
+    p.volcano.2 = fun.plot.volcano(ls.diff.2, 'Comparison 2')
+    p.volcano.2
+}
+```
+
+
+```{r fig.cap='Volcano plot for Comparison 3'}
+if ('Comparison 3' %in% comparisons) {
+    p.volcano.3 = fun.plot.volcano(ls.diff.3, 'Comparison 3')
+    p.volcano.3
+}
+```
+
+```{r}
+comp.tmp = comparisons[comparisons != 'Comparison 0']
+num.filter = 0
+for (i in comp.tmp) {
+    ls.diff = fun.DEanalysis.Ttest(i)
+    df.filter = ls.diff$res.filter
+    if (nrow(df.filter) == 0) {
+        num.filter = num.filter
+    } else {
+        num.filter = num.filter + 1
+    }
+}
+if (num.filter == 0) {
+    description = 'Sorry, did not find any differentially expressed in any defined comparisons'
+    knitr::knit_exit()
+} else {description = ''}
+```
+`r description`
+
+# Gene Target Analysis
+```{r}
+source('scripts/step11_targetgene.R')
+```
+
+## Genes Targeted by Selected miRNA 
+miRNAs found differentially expressed between the sample groups (fold change \>= `r threshold.DE.dCt` and p-value =\< `r threshold.DE.pvalue`) are subjected to gene target analysis using mirTarBase [@RN1]. A subset of the gene targets is shown below. For a list of all genes targeted by the differentially expressed miRNAs, please refer to the `target_gene_n.csv` file (where n is the comparison number).
+
+
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 1' %in% comparisons) {
+    ls.miRNA2gene.1 = fun.targetGene(ls.diff.1)
+    if(length(ls.miRNA2gene.1) == 1) {
+        description = "Sorry, target genes cannot be found by selected miRNA of Comparison 1"
+    } else {
+        description = ""
+        kbl(ls.miRNA2gene.1$miRNA2gene.show,
+            caption = "Gene targets of the selected miRNA in Comparison 1",
+        format = 'latex',
+        booktabs = TRUE,
+        linesep = '') %>%
+        kable_styling(latex_options = c("striped", "HOLD_position"), 
+                        
+                      stripe_color = "gray!15")
+    }
+} else {description = ''}
+```
+`r description`
+
+
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 2' %in% comparisons) {
+    ls.miRNA2gene.2 = fun.targetGene(ls.diff.2)
+    if(length(ls.miRNA2gene.2) == 1) {
+        description = "Sorry, target genes cannot be found by selected miRNA of Comparison 2"
+    } else {
+        description = ""
+        kbl(ls.miRNA2gene.2$miRNA2gene.show,
+            caption = "Gene targets of the selected miRNA in Comparison 2",
+        format = 'latex',
+        booktabs = TRUE,
+        linesep = '') %>%
+        kable_styling(latex_options = c("striped", "HOLD_position"), 
+                        
+                      stripe_color = "gray!15")
+    }
+} else {description = ''}
+```
+`r description`
+
+
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 3' %in% comparisons) {
+    ls.miRNA2gene.3 = fun.targetGene(ls.diff.3)
+    if(length(ls.miRNA2gene.3) == 1) {
+        description = "Sorry, target genes cannot be found by selected miRNA of Comparison 3"
+    } else {
+        description = ""
+        kbl(ls.miRNA2gene.3$miRNA2gene.show,
+            caption = "Gene targets of the selected miRNA in Comparison 3",
+        format = 'latex',
+        booktabs = TRUE,
+        linesep = '') %>%
+        kable_styling(latex_options = c("striped", "HOLD_position"), 
+                        
+                      stripe_color = "gray!15")
+            
+    }
+} else {description = ''}
+```
+`r description`
+
+
+## GO Enrichment Analysis [@RN10]
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+source('scripts/step12_go.R')
+```
+
+
+
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 1' %in% comparisons) {
+    if(length(ls.miRNA2gene.1) == 1) {
+        description = "Sorry, GO enrichment is not applicable for Comparison 1."
+        ls.GOsum.1 = NA
+    } else {
+        ls.GOsum.1 = fun.GOsum(ls.miRNA2gene.1)
+        if (length(ls.GOsum.1) == 1 ) {
+            description = "Sorry, there was no significantly enriched GO hits."
+        } else {
+            description = ''
+            kbl(ls.GOsum.1$res.show,
+                caption = "GO terms hit by target genes in Comparison 1",
+format = 'latex',
+booktabs = TRUE,
+linesep = '') %>%
+kable_styling(latex_options = c("striped", "HOLD_position"),
+
+              stripe_color = "gray!15")
+        }
+    }
+} else {description = ''}
+```
+`r description`
+
+
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 2' %in% comparisons) {
+    if(length(ls.miRNA2gene.2) == 1) {
+        description = "Sorry, GO enrichment is not applicable for Comparison 2."
+        ls.GOsum.2 = NA
+    } else {
+        ls.GOsum.2 = fun.GOsum(ls.miRNA2gene.2)
+        if (length(ls.GOsum.2) == 1 ) {
+            description = "Sorry, there was no significantly enriched GO hits."
+        } else {
+            description = ''
+            kbl(ls.GOsum.2$res.show,
+                caption = "GO terms hit by target genes in Comparison 2",
+format = 'latex',
+booktabs = TRUE,
+linesep = '') %>%
+kable_styling(latex_options = c("striped", "HOLD_position"),
+
+              stripe_color = "gray!15")
+        }
+    }
+} else {description = ''}
+```
+`r description`
+
+
+
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+if('Comparison 3' %in% comparisons) {
+    if(length(ls.miRNA2gene.3) == 1) {
+        description = "Sorry, GO enrichment is not applicable for Comparison 3."
+        ls.GOsum.3 = NA
+    } else {
+        ls.GOsum.3 = fun.GOsum(ls.miRNA2gene.3)
+        if (length(ls.GOsum.3) == 1 ) {
+            description = "Sorry, there was no significantly enriched GO hits."
+        } else {
+            description = ''
+            kbl(ls.GOsum.3$res.show,
+                caption = "GO terms hit by target genes in Comparison 3",
+format = 'latex',
+booktabs = TRUE,
+linesep = '') %>%
+kable_styling(latex_options = c("striped", "HOLD_position"),
+
+              stripe_color = "gray!15")
+        }
+    }
+} else {description = ''}
+```
+`r description`
+
+# Results Summary
+```{r echo = FALSE, warning=FALSE, message=FALSE}
+source('scripts/step13_ResSummary_352.R')
+```
+
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, results='hide'}
+if('Comparison 1' %in% comparisons) {
+    fun.plot.summary(ls.diff.1, ls.miRNA2gene.1, ls.GOsum.1, 'Comparison 1')
+}
+```
+
+```{r fig.cap='Result Summary for Comparison 1', out.width='80%'}
+if('Comparison 1' %in% comparisons){
+knitr::include_graphics(file.path(dir.out.fig, 'ResSum_Comparison 1.png'))
+}
+```
+
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, results='hide'}
+if('Comparison 2' %in% comparisons) {
+    fun.plot.summary(ls.diff.2, ls.miRNA2gene.2, ls.GOsum.2, 'Comparison 2')
+}
+```
+
+```{r fig.cap='Result Summary for Comparison 2', out.width='80%'}
+if('Comparison 2' %in% comparisons){
+knitr::include_graphics(file.path(dir.out.fig, 'ResSum_Comparison 2.png'))
+}
+```
+
+
+```{r echo = FALSE, message=FALSE, warning=FALSE, results='hide'}
+if('Comparison 3' %in% comparisons) {
+    fun.plot.summary(ls.diff.3, ls.miRNA2gene.3, ls.GOsum.3, 'Comparison 3')
+}
+```
+
+```{r fig.cap='Result Summary for Comparison 3', out.width='80%'}
+if('Comparison 3' %in% comparisons){
+knitr::include_graphics(file.path(dir.out.fig, 'ResSum_Comparison 3.png'))
+}
+```
+
+
+
+# References
