@@ -9,6 +9,7 @@ library(readxl)
 library(stringi)
 library(stringr)
 library(writexl)
+library(limma)
 
 library(topGO)
 library(DESeq2) # Could be Limma
@@ -29,10 +30,12 @@ library(kableExtra)
 # Set Directory
 # --------------------------- #
 dir.top      = '/Users/plateau/Documents/GitHub/PanoramiR'
-dir.input    = 'input_cancer'
+dir.input    = 'input_panoramiR'
 dir.resource = 'resources'
-dir.out.fig  = 'output/figures'
-dir.out.tbl  = 'output/tables'
+dir.out      = 'output'
+
+dir.out.fig  = file.path(dir.out, 'figure')
+dir.out.tbl  = file.path(dir.out, 'table')
 
 # Set working directory
 setwd(dir.top)
@@ -54,7 +57,7 @@ arg.pipeline     = 'PanoramiR' #Option: ['Cancer', 'Biofluid', 'PanoramiR']
 
 ##### Common Resources
 file.ref.target  = file.path(dir.resource, 'Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt') 
-png.mSMRT.qPCR   = file.path(dir.resource, 'mSMRT_qPCR.png') # Haven't been inserted into report
+png.mSMRT.qPCR   = file.path(dir.resource, 'mSMRT_qPCR.jpeg') # Haven't been inserted into report
 
 ##### Pipeline based resources
 if(arg.pipeline == 'PanoramiR') { # PanoramiR Pipeline
@@ -94,16 +97,16 @@ cutoff.sp      = 32          # The second round filter, for spike-in normalizati
 
 threshold.impute    = 0.1    # No more than 10% missing value in miRNA
 threshold.DE.pvalue = 0.05   # The p value of T test
-threshold.DE.dCt    = 1      # The log2 fold change of geometric mean
+threshold.DE.dCt    = 0.5      # The log2 fold change of geometric mean
 threshold.GO.pvalue = 0.01
-GO.nodesize         = 10
+GO.nodesize         = 6
 
 
 # Set Color
 col.compare.1 = brewer.pal(6, "Dark2")[1:2] # Green - Orange
 col.compare.2 = brewer.pal(6, "Dark2")[3:4] # Purple - Pink
 col.compare.3 = brewer.pal(6, "Dark2")[5:6] # Green - Yellow
-col.others = brewer.pal(11,'RdYlBu')[c(1, 11)] # Red - Blue
+col.others = c(brewer.pal(11,'RdYlBu')[1], '#001F36') # Red - Blue
 col.grey   = brewer.pal(8, "Set2")[8] # grey
 col.heatmap = brewer.pal(11, 'PRGn')[c(1, 11)] # Purple - Green
 col.heatmap = c(col.heatmap[1], "#FFFFFF", col.heatmap[2])
