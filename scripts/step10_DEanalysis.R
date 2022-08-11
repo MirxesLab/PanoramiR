@@ -19,6 +19,7 @@
     # fun.plot.scatter(ls.diff, comp) # based on dCt
     # fun.plot.volcano(ls.diff, comp) # based on both pvalue and dCt
 # =========================================================================== #
+
 # update ls.compare.group
 ls.compare.group <- list()
 n.comp.group = length(comparisons[comparisons != 'Comparison 0'])

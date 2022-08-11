@@ -91,6 +91,6 @@ df.exclude.miRNA = df.exclude.miRNA %>%
     dplyr::mutate('Threshold' = threshold.sample)
 colnames(df.exclude.miRNA) = c('miRNA', tmp.colname, 'Missing Values', 'Threshold')
 
-write_xlsx(df.exclude.miRNA, file.path(dir.out.tbl,
-                                       'Excluded miRNA.xlsx'))
+write.csv(df.exclude.miRNA, file.path(dir.out.tbl,
+                                       'Excluded miRNA (before Global Norm).csv'))
 

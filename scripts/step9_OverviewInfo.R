@@ -98,7 +98,7 @@ df.anno.all = df.samplesheet[, c('Samples', comparisons[comparisons != "Comparis
 df.anno.all = df.anno.all[df.anno.all$Samples %in% colnames(df.input.data.GlobalNorm)[-1], ] %>%
     tibble::column_to_rownames('Samples')
 
-rownames(df.anno.all) = paste0('sample_', df.samplesheet$Samples)
+rownames(df.anno.all) = paste0('sample_', colnames(df.input.data.GlobalNorm)[-1])
 
 # Prepare annotation color for heatmap
 color.anno.all = list('Comparison 1' = c(A = col.compare.1[1], B = col.compare.1[2]),

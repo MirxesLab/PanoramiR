@@ -29,7 +29,7 @@ df.input.data.Filt2[, -c(1,2)] = apply(df.input.data.Filt2[, -c(1,2)],
 
 tmp = df.input.data.Filt2
 colnames(tmp)[-c(1,2)] = paste0('sample ', colnames(tmp)[-c(1,2)])
-write_xlsx(tmp, file.path(dir.out.tbl, 'Data SP-inNorm.xlsx'))
+write.csv(tmp, file.path(dir.out.tbl, 'Data SP-inNorm.csv'))
 
 
 

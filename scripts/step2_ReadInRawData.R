@@ -132,5 +132,5 @@ tmp.colname = colnames(tmp)[-c(1,2)]
 colnames(tmp) = c(colnames(tmp)[c(1,2)],
                   paste('sample ', tmp.colname))
 
-write_xlsx(tmp,
-           file.path(dir.out.tbl, 'Data Raw.xlsx'))
+write.csv(tmp,
+           file.path(dir.out.tbl, 'Data Raw.csv'))

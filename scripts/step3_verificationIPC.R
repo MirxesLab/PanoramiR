@@ -29,22 +29,21 @@ failure.ipc = which(apply(IPC[, -c(1,2)],
                           2,
                           function(x) sum(x > threshold.ipc)) > 0)
 
-ipc.report = paste0('sample ', failure.ipc)
-if(length(failure.ipc) > 1) {
-    index = length(failure.ipc) - 1
-    ipc.report[1:index] = paste0(ipc.report[1:index], ', ')
-}
-
 # IPC summary, save results automatically
 for(i in group) {
     ipc = IPC[IPC$Group == i, ]
-    sd   = round(apply(ipc[, -c(1:2)], 2, sd, na.rm = TRUE), 3)
+    ipc.1 = ipc[ipc$miRNA == name.ipc[1], ]
+    ipc.2 = ipc[ipc$miRNA == name.ipc[2], ]
+    
+    sd.1   = round(apply(ipc.1[, -c(1:2)], 2, sd, na.rm = TRUE), 3)
+    sd.2   = round(apply(ipc.2[, -c(1:2)], 2, sd, na.rm = TRUE), 3)
     
     if (i == 'A') {
-        IPC.sum = data.frame(sd.A = sd)
+        IPC.sum = data.frame(sd.A.rep1 = sd.1,
+                             sd.A.rep2 = sd.2)
     } else {
-        df.tmp = data.frame(sd)
-        colnames(df.tmp) = paste0('sd.', i)
+        df.tmp = data.frame(sd.1, sd.2)
+        colnames(df.tmp) = paste0('sd.', i, '.rep',c(1:2))
         IPC.sum = cbind(IPC.sum, df.tmp)
     }
 }
@@ -56,7 +55,8 @@ IPC.sum = IPC.sum %>%
                                   'exclude',
                                   'include')) %>%
     dplyr::mutate(sample = rownames(IPC.sum)) %>%
-    dplyr::select('sample', 'max.IPC', 'status', tmp.colname)
+    dplyr::mutate(threshold = threshold.ipc) %>%
+    dplyr::select('sample', 'max.IPC', 'threshold', 'status', tmp.colname)
 
 write.csv(IPC.sum, 
            file.path(dir.out.tbl, 'IPC_Check_Summary.csv'))

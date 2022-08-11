@@ -30,7 +30,7 @@ library(kableExtra)
 # Set Directory
 # --------------------------- #
 dir.top      = '/Users/plateau/Documents/GitHub/PanoramiR'
-dir.input    = 'input_panoramiR'
+dir.input    = 'input_cancer'
 dir.resource = 'resources'
 dir.out      = 'output'
 
@@ -41,7 +41,6 @@ dir.out.tbl  = file.path(dir.out, 'table')
 setwd(dir.top)
 
 # Create directory for output
-dir.create(dir.out.fig, recursive = TRUE, showWarnings = FALSE)
 dir.create(dir.out.tbl, recursive = TRUE, showWarnings = FALSE)
 
 # Set file path
@@ -53,7 +52,7 @@ dir.create(dir.out.tbl, recursive = TRUE, showWarnings = FALSE)
 ##### Input
 file.samplesheet = file.path(dir.input, 'Sample Manifest Form.xlsx')
 file.RNAvol      = file.path(dir.input, 'RNAvolume.xlsx')
-arg.pipeline     = 'PanoramiR' #Option: ['Cancer', 'Biofluid', 'PanoramiR']
+arg.pipeline     = 'Cancer' #Option: ['Cancer', 'Biofluid', 'PanoramiR']
 
 ##### Common Resources
 file.ref.target  = file.path(dir.resource, 'Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt') 
@@ -81,7 +80,12 @@ if(arg.pipeline == 'PanoramiR') { # PanoramiR Pipeline
 
 # Set parameters
 # --------------------------- #
-is.RTsp        = FALSE       # Whether the spike-in is Reverse Transcript Spike-in -> Whether Normalized by RNA input volume
+is.RTsp        = TRUE      # Whether the spike-in is Reverse Transcript Spike-in -> Whether Normalized by RNA input volume
+is.basic       = FALSE       # For basic tier, no report generated
+
+if(!is.basic) {
+    dir.create(dir.out.fig, recursive = TRUE, showWarnings = FALSE)
+}
 
 threshold.ipc  = 25          # If IPC has Ct values greater than 25, it indicates qPCR reaction has failed. -> remove those samples
 sd.ipc         = 0.5         # Standard deviation greater than 0.5 indicates pipetting error and caution should be taken when interpreting results

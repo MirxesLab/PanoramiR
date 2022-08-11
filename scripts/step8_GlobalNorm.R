@@ -103,7 +103,7 @@ fun.plot.violin = function(comp, cols) {
 # -------------------------- #
 tmp = df.input.data.GlobalNorm
 colnames(tmp) = c('miRNA', paste('sample', colnames(tmp)[-1]))
-write_xlsx(tmp, file.path(dir.out.tbl, 'Data GlobalNorm.xlsx'))
+write.csv(tmp, file.path(dir.out.tbl, 'Data GlobalNorm.csv'))
 
 
 

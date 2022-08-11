@@ -123,11 +123,11 @@ if(is.RTsp) {
         sp.2 = sp[sp$miRNA == name.sp[2], -c(1,2)]
         
         # Plan A
-        diff.1 = t(sp.1[1, ] - sp.1[2, ])
-        diff.2 = t(sp.2[1, ] - sp.2[2, ])
+        sd.1 = apply(sp.1, 2, sd, na.rm = TRUE)
+        sd.2 = apply(sp.2, 2, sd, na.rm = TRUE)
 
-        df.diff = cbind(diff.1, diff.2) %>% round(3)
-        colnames(df.diff) = paste0(paste0('diff.', groupID), c('.SP1', '.SP2'))
+        df.sd = cbind(sd.1, sd.2) %>% round(3)
+        colnames(df.sd) = paste0(paste0('sd.', groupID), c('.rep1', '.rep2'))
         
         # Plan B
         # mean.1 = apply(sp.1, 2, mean, na.rm = TRUE)
@@ -137,7 +137,7 @@ if(is.RTsp) {
         # df.diff = data.frame(diff = diff) %>% round(3)
         # colnames(df.diff) = paste0('diff.', groupID)
         
-        return(df.diff)
+        return(df.sd)
     }  # Calculate the difference between Spike-ins
     
     # Create the SP summary data frame: [sample, statue, max SP, difference]
@@ -166,7 +166,8 @@ if(is.RTsp) {
                                       'exclude',
                                       'include')) %>%
         dplyr::mutate(sample = rownames(SP.sum)) %>%
-        dplyr::select('sample', 'status', 'max.SP', tmp.colname)
+        dplyr::mutate(threshold = threshold.sp) %>%
+        dplyr::select('sample', 'max.SP', 'threshold', 'status', tmp.colname)
     
     # Save results
     write.csv(SP.sum, file.path(dir.out.tbl, 'SP_Check_Summary.csv'))
@@ -198,7 +199,8 @@ if(is.RTsp) {
         for (i in comp.tmp) {
             if (i %in% comparisons) {
                 comp = ls.compare.group[[i]]
-                tmp  = comp[comp$Samples != remove.sample, ]
+                index = which(comp$Samples  %in% remove.sample)
+                tmp  = comp[-index, ]
                 num.A = sum(tmp[[i]] == 'A')
                 num.B = sum(tmp[[i]] == 'B')
                 if (num.A < 2) { 
