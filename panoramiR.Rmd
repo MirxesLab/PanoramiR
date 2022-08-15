@@ -11,6 +11,7 @@ output:
         use_bookdown: true
 bibliography: resources/bibliography.bibtex
 css: resources/mirxes_theme.css
+csl: resources/3d-printing-in-medicine.csl
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
@@ -123,7 +124,7 @@ source('scripts/step7_Imputation.R')
 ```
 
 ### Number of miRNA Detected in Samples
-The threshold Ct value is based on QC data for each specific batch of PanoramiR kit (`r min.up.limit` ~ `r cutoff.max`). MiRNAs in each samples with Ct values less than it corresponding threshold are selected for later analysis, otherwise miRNAs are considered as non-detect ; Expression figures below shows the number of detected miRNAs in each samples.
+The threshold Ct value is based on QC data specific to each assay. MiRNAs in each samples with Ct values less than it corresponding threshold are selected for later analysis, otherwise miRNAs are considered as non-detect ; Expression figures below shows the number of detected miRNAs in each samples.
 
 ```{r fig.cap= "Number of miRNA Detected in Samples"}
 ggplotly(p.num.miRNA) # generated in step2_RSInorm.R
@@ -136,7 +137,7 @@ MiRNAs with missing values in more than 10% (> 10%) of the total number of sampl
 kableExtra::kbl(df.miss,
                 caption = "Number of missing value of miRNAs acorss samples",
                 col.names = gsub("[.]", " ", names(df.miss))) %>%
-  kable_classic(full_width = T, html_font = "Cambria") %>%
+  kable_classic(full_width = T, html_font = "Arial") %>%
     footnote(general = 'Tolerable missing values across samples are no more than 10% number of samples')
 ```
 
@@ -269,7 +270,7 @@ if("Comparison 1" %in% comparisons) {
     
     kbl(ls.diff.1$res.order[1:20, ],
         caption = "20 miRNA with smallest p value in Comparison 1") %>%
-        kable_classic(full_width = T, html_font = "Cambria") %>%
+        kable_classic(full_width = T, html_font = "Arial") %>%
         row_spec(0, background=rep(col.others[2], ncol(ls.diff.1$res.order)),
                  extra_css = 'border: 0px;') %>%
         scroll_box(width = '100%', height = '250px')
@@ -283,7 +284,7 @@ if("Comparison 2" %in% comparisons) {
     
     kbl(ls.diff.2$res.order[1:20, ],
         caption = "20 miRNA with smallest p value in Comparison 2") %>%
-        kable_classic(full_width = T, html_font = "Cambria") %>%
+        kable_classic(full_width = T, html_font = "Arial") %>%
         row_spec(0, background=rep(col.others[2], ncol(ls.diff.2$res.order)),
                  extra_css = 'border: 0px;') %>%
         scroll_box(width = '100%', height = '250px')
@@ -297,7 +298,7 @@ if("Comparison 3" %in% comparisons) {
     
     kbl(ls.diff.3$res.order[1:20, ],
         caption = "20 miRNA with smallest p value in Comparison 3") %>%
-        kable_classic(full_width = T, html_font = "Cambria") %>%
+        kable_classic(full_width = T, html_font = "Arial") %>%
         row_spec(0, background=rep(col.others[2], ncol(ls.diff.3$res.order)),
                  extra_css = 'border: 0px;') %>%
         scroll_box(width = '100%', height = '250px')
@@ -425,7 +426,7 @@ if('Comparison 1' %in% comparisons) {
         
         kbl(ls.miRNA2gene.1$miRNA2gene.show,
             caption = "Gene targets of the selected miRNA in Comparison 1") %>%
-            kable_classic(full_width = T, html_font = 'Cambria') %>%
+            kable_classic(full_width = T, html_font = 'Arial') %>%
             row_spec(0, background=rep(col.others[2],
                                        ncol(ls.miRNA2gene.1$miRNA2gene.show)),
                      extra_css = 'border: 0px;') %>%
@@ -449,7 +450,7 @@ if('Comparison 2' %in% comparisons) {
         
         kbl(ls.miRNA2gene.2$miRNA2gene.show,
             caption = "Gene targets of the selected miRNA in Comparison 2") %>%
-            kable_classic(full_width = T, html_font = 'Cambria') %>%
+            kable_classic(full_width = T, html_font = 'Arial') %>%
             row_spec(0, background=rep(col.others[2],
                                        ncol(ls.miRNA2gene.2$miRNA2gene.show)),
                      extra_css = 'border: 0px;') %>%
@@ -474,7 +475,7 @@ if('Comparison 3' %in% comparisons) {
 
         kbl(ls.miRNA2gene.3$miRNA2gene.show,
             caption = "Gene targets of the selected miRNA in Comparison 3") %>%
-            kable_classic(full_width = T, html_font = 'Cambria') %>%
+            kable_classic(full_width = T, html_font = 'Arial') %>%
             row_spec(0, background=rep(col.others[2],
                                        ncol(ls.miRNA2gene.3$miRNA2gene.show)),
                      extra_css = 'border: 0px;') %>%
@@ -511,7 +512,7 @@ if('Comparison 1' %in% comparisons) {
                                                             'GO_1.csv'))
             kbl(ls.GOsum.1$res.show,
                 caption = "GO terms hit by target genes in Comparison 1") %>%
-                kable_classic(full_width = T, html_font = 'Cambria') %>%
+                kable_classic(full_width = T, html_font = 'Arial') %>%
                 row_spec(0, background=rep(col.others[2],
                                             ncol(ls.GOsum.1$res.show)),
                          extra_css = 'border: 0px;') %>%
@@ -538,7 +539,7 @@ if('Comparison 2' %in% comparisons) {
                                                             'GO_2.csv'))
             kbl(ls.GOsum.2$res.show,
                 caption = "GO terms hit by target genes in Comparison 2") %>%
-                kable_classic(full_width = T, html_font = 'Cambria') %>%
+                kable_classic(full_width = T, html_font = 'Arial') %>%
                 row_spec(0, background=rep(col.others[2],
                                             ncol(ls.GOsum.2$res.show)),
                          extra_css = 'border: 0px;') %>%
@@ -566,7 +567,7 @@ if('Comparison 3' %in% comparisons) {
                                                             'GO_3.csv'))
             kbl(ls.GOsum.3$res.show,
                 caption = "GO terms hit by target genes in Comparison 3") %>%
-                kable_classic(full_width = T, html_font = 'Cambria') %>%
+                kable_classic(full_width = T, html_font = 'Arial') %>%
                 row_spec(0, background=rep(col.others[2],
                                             ncol(ls.GOsum.3$res.show)),
                          extra_css = 'border: 0px;') %>%

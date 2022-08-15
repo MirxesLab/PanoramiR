@@ -16,6 +16,14 @@ h2, h3, h4, h5, h6, legend{
     font-family: Arial;
 }
 
+.header-section-number::after {
+  content: ". ";
+}
+
+# sidebar .header-section-number::after {
+  content: ". ";
+}
+
 #sidebar {
     background: #000000;
 }
