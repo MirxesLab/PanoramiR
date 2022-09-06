@@ -99,6 +99,10 @@ a:hover {
     border: 0px;
 }
 
+#content {
+    background: white;
+}
+
 table:not(.dataTable) tr:nth-child(2n-1) {
     background-color: #FFF;
 }
