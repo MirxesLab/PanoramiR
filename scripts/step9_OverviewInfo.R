@@ -90,6 +90,9 @@ fun.heatmap = function(df, main, anno.df, anno.col) {
 # ------------------------------------- #
 # Prepare the data frame for heatmap
 allmiRNA = df.input.data.GlobalNorm[, -1] %>% as.data.frame()
+index = which(apply(allmiRNA, 1, sd) == 0)
+allmiRNA = allmiRNA[-index, ]
+
 rownames(allmiRNA) = df.input.data.GlobalNorm$miRNA
 colnames(allmiRNA) = paste0('sample_', colnames(df.input.data.GlobalNorm)[-1])
 

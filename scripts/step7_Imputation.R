@@ -51,7 +51,12 @@ index.remove = which(apply(df.input.data.Filt2,
                            1, 
                            function(x) sum(is.na(x))) > threshold.impute * num.sample)
 
-df.input.data.noNA = df.input.data.Filt2[-index.remove, ]
+if (sum(index.remove) != 0) {
+    df.input.data.noNA = df.input.data.Filt2[-index.remove, ]
+} else {
+    df.input.data.noNA = df.input.data.Filt2
+}
+
 
 # Impute missing value based on the greatest Ct value of miRNA across samples
 df.input.data.noNA[, -1] = apply(df.input.data.noNA[, -1], 
