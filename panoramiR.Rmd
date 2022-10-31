@@ -23,7 +23,7 @@ knitr::opts_chunk$set(echo = FALSE,
 ```{r echo = FALSE, warning= FALSE, message = FALSE}
 # Preparation
 source('scripts/config.R') 
-source('scripts/step1_ReadInSamplesheet.R') # Read in Samplesheet
+source('scripts/step1_ReadInSamplesheet.R') # Read in Sample sheet
 source('scripts/step2_ReadInRawData.R')
 
 ```
@@ -87,9 +87,9 @@ source('scripts/step4_Round1Filter.R')
 miRNA spike-ins are uniquely designed small RNAs (~22 nt ) with sequences distinct from endogenous human miRNAs. These miRNA spike-ins have been extensively tested and are compatible with various isolation methods, including phenol/chloroform, phenol free, membrane, bead and precipitation based methods, provided the method retains the small RNA fraction. The use of miRNA spike-ins can monitor and normalize experimental variations in sample RNA isolation, reverse transcription and qPCR.
 
 The miRNA spike-ins can be used in two modes: \
-1. As RNA isolation control. miRNA spike-ins are added to sample lysis buffer or RNA isolation buffer before mixing with biological sample. A difference in the measured levels of miRNA spike-ins indicates varying RNA isolation yield and/or RNA purity. When used in RNA isolation, the RNA input volume to RT should be taken into consideration before spike-in Cts are used to calculate a normalization factor.
+1. As RNA isolation control. miRNA spike-ins are added to sample lysis buffer or RNA isolation buffer before mixing with biological sample. A difference in the measured levels of miRNA spike-ins indicates varying RNA isolation yield and/or RNA purity.
 
-2.As reverse transcription control. miRNA spike-ins are added to RT master mix. Measured levels of miRNA spike ins allow normalization between RT reactions to detect inconsistencies between samples e.g. presence of RT-qPCR inhibitors in some samples. **If RT spike-in has Ct value greater than 30, it indicates RT reaction has failed**, and corresponding samples are removed (Please refer to the `SP_Check_Summary.xlsx` for details).
+2.As reverse transcription control. miRNA spike-ins are added to RT master mix. Measured levels of miRNA spike ins allow normalization between RT reactions to detect inconsistencies between samples e.g. presence of RT-qPCR inhibitors in some samples. **If RT spike-in has Ct value greater than `r threshold.sp`, it indicates RT reaction has failed**, and corresponding samples are removed (Please refer to the `SP_Check_Summary.xlsx` for details).
 
 The Ct values of targeted miRNA are first normalized by miRNA spike-ins. Each sample will have a spike-in Ct corresponding to each AUG group (A1, A2, B1, B2 and so on). Each spike-in Ct values is used to calculate a spike-in factor which is added to Ct values of miRNAs in the corresponding AUG group. For the specific calculation method, please refer to the formula below.
 
@@ -124,7 +124,7 @@ source('scripts/step7_Imputation.R')
 ```
 
 ### Number of miRNA Detected in Samples
-The threshold Ct value is based on QC data specific to each assay. MiRNAs in each samples with Ct values less than it corresponding threshold are selected for later analysis, otherwise miRNAs are considered as non-detect ; Expression figures below shows the number of detected miRNAs in each samples.
+Figure below shows the miRNA expression level in each sample. Values have been filtered based on Ct value threshold (`r cutoff.min` ~ `r cutoff.max`) and then spike-in and global normalized. 
 
 ```{r fig.cap= "Number of miRNA Detected in Samples"}
 ggplotly(p.num.miRNA) # generated in step2_RSInorm.R

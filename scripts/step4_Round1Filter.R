@@ -20,26 +20,28 @@
 if(arg.pipeline == 'PanoramiR') {df.input.data.ipc = df.input.data}
 
 # for PanoramiR, cutoff.max is min.up.limit ~ cutoff.max (by default: 33)
-if(arg.pipeline == 'PanoramiR') {
-    threshold = read_excel(file.ref.miRthld)
-    min.up.limit = min(threshold$Threshold, na.rm = TRUE)
-    
-    # Make sure the row order of miRNA is same as the one of df.input.data
-    threshold = as.data.frame(threshold)
-    rownames(threshold) = threshold$miRNA
-    threshold = threshold[df.input.data.ipc$miRNA, ]
-    
-    # Change the cutoff.max based on the reference file
-    threshold[, 2] = sapply(threshold[, 2], 
-                            function(x) ifelse(x > cutoff.max, cutoff.max, x))
-} else {
-    threshold = data.frame(miRNA = df.input.data.ipc$miRNA,
-                           Threshold = cutoff.max)
-}
+# if(arg.pipeline == 'PanoramiR') {
+#     threshold = read_excel(file.ref.miRthld)
+#     min.up.limit = min(threshold$Threshold, na.rm = TRUE)
+#     
+#     # Make sure the row order of miRNA is same as the one of df.input.data
+#     threshold = as.data.frame(threshold)
+#     rownames(threshold) = threshold$miRNA
+#     threshold = threshold[df.input.data.ipc$miRNA, ]
+#     
+#     # Change the cutoff.max based on the reference file
+#     threshold[, 2] = sapply(threshold[, 2], 
+#                             function(x) ifelse(x > cutoff.max, cutoff.max, x))
+# } else {
+#     threshold = data.frame(miRNA = df.input.data.ipc$miRNA,
+#                            Threshold = cutoff.max)
+# }
 
 # Filter based on cutoff.max, cutoff.min
 df.input.data.Filt1 = df.input.data.ipc
 num.sample = ncol(df.input.data.ipc) - 2
+threshold = data.frame(miRNA = df.input.data.ipc$miRNA, Threshold = cutoff.max)
+                       
 for (i in 1:nrow(df.input.data.ipc)) {
     for (j in 1:num.sample) {
         bloon.1 = is.na(df.input.data.Filt1[i, j+2])

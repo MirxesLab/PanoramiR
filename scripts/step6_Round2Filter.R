@@ -21,6 +21,7 @@ df.input.data.Filt2[, -c(1,2)] = apply(df.input.data.Filt2[, -c(1,2)],
                                        function(x) ifelse(x > cutoff.sp,
                                                           NA,
                                                           x))
+
 # Check Point
 # NA1 = apply(df.input.data.Filt1[,-c(1,2)], 2, function(x) sum(is.na(x)))
 # NA2 = apply(df.input.data.Filt2[,-c(1,2)], 2, function(x) sum(is.na(x)))

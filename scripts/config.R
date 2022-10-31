@@ -8,9 +8,9 @@ library(dplyr)
 library(readxl)
 library(stringi)
 library(stringr)
-library(writexl)
 library(limma)
 
+library(org.Hs.eg.db)
 library(topGO)
 library(DESeq2) # Could be Limma
 
@@ -30,12 +30,15 @@ library(kableExtra)
 # Set Directory
 # --------------------------- #
 dir.top      = '/Users/plateau/Documents/GitHub/PanoramiR'
-dir.input    = 'input_cancer'
-dir.resource = 'resources'
+dir.input    = 'input_ncRNA'
 dir.out      = 'output'
 
 dir.out.fig  = file.path(dir.out, 'figure')
 dir.out.tbl  = file.path(dir.out, 'table')
+
+dir.resource.fig = 'resources/figure'
+dir.resource.tbl = 'resources/table'
+dir.resource.qc  = 'resources/QC_data'
 
 # Set working directory
 setwd(dir.top)
@@ -51,36 +54,36 @@ dir.create(dir.out.tbl, recursive = TRUE, showWarnings = FALSE)
     # Unique sample ID: 2007 001 or 2007 001_002 [Recorded in sample manifest form]
 ##### Input
 file.samplesheet = file.path(dir.input, 'Sample Manifest Form.xlsx')
-file.RNAvol      = file.path(dir.input, 'RNAvolume.xlsx')
-arg.pipeline     = 'Cancer' #Option: ['Cancer', 'Biofluid', 'PanoramiR']
+arg.pipeline     = 'PanoramiR' #Option: ['Cancer', 'Biofluid', 'PanoramiR']
 
 ##### Common Resources
-file.ref.target  = file.path(dir.resource, 'Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt') 
-png.mSMRT.qPCR   = file.path(dir.resource, 'mSMRT_qPCR.jpeg') # Haven't been inserted into report
+file.ref.target  = file.path(dir.resource.tbl, 'Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt') 
+png.mSMRT.qPCR   = file.path(dir.resource.fig, 'mSMRT_qPCR.jpeg') # Haven't been inserted into report
 
 ##### Pipeline based resources
 if(arg.pipeline == 'PanoramiR') { # PanoramiR Pipeline
-    file.ref.miRList = file.path(dir.resource, 'miRList_PanoramiR.xlsx') # [Group, Position, miRBASE v22 Accession, miRNAID]
-    file.ref.miRsp   = file.path(dir.resource, 'miRSpike.xlsx' )         # [Spike-in miRNA: Position, miRNA ID, SP, Group]
-    file.ref.miRthld = file.path(dir.resource, 'miRThreshold.xlsx')      # [miRNA, Threshold]
-    png.workflow     = file.path(dir.resource, 'workflow_PanoramiR.png')
+    file.ref.miRList = file.path(dir.resource.tbl, 'miRList_PanoramiR.xlsx') # [Group, Position, miRBASE v22 Accession, miRNAID]
+    file.ref.miRsp   = file.path(dir.resource.tbl, 'miRSpike.xlsx' )         # [Spike-in miRNA: Position, miRNA ID, SP, Group]
+    # file.ref.miRthld = file.path(dir.resource.qc, 'miRThreshold.xlsx')      # [miRNA, Threshold]
+    # Use Fixed threshold now 9 ~ 33
+    png.workflow     = file.path(dir.resource.fig, 'workflow_PanoramiR.png')
     
 } else if (arg.pipeline == 'Cancer') { # Cancer Pipeline
-    file.ref.miRList = file.path(dir.resource, 'miRList_Cancer.xlsx')
-    png.workflow     = file.path(dir.resource, 'workflow_Cancer.png')
+    file.ref.miRList = file.path(dir.resource.tbl, 'miRList_Cancer.xlsx')
+    png.workflow     = file.path(dir.resource.fig, 'workflow_Cancer.png')
     name.sp          = c('Spike-in RNA Ctr 1', 'Spike-in RNA Ctr 2')
     name.ipc         = c('Inter-plate Calibrator 1', 'Inter-plate Calibrator 2')
     
 } else if (arg.pipeline == 'Biofluid') { # Biofluid Pipeline
-    file.ref.miRList = file.path(dir.resource, 'miRList_Biofluid.xlsx')
-    png.workflow     = file.path(dir.resource, 'workflow_Biofluid.png')
+    file.ref.miRList = file.path(dir.resource.tbl, 'miRList_Biofluid.xlsx')
+    png.workflow     = file.path(dir.resource.fig, 'workflow_Biofluid.png')
     name.sp          = c('Spike-in RNA Ctr 1', 'Spike-in RNA Ctr 2')
     name.ipc         = c('Inter-plate Calibrator 1', 'Inter-plate Calibrator 2')
 }
 
 # Set parameters
 # --------------------------- #
-is.RTsp        = TRUE      # Whether the spike-in is Reverse Transcript Spike-in -> Whether Normalized by RNA input volume
+is.RTsp        = TRUE        # Whether the spike-in is Reverse Transcript Spike-in -> Whether Normalized by RNA input volume
 is.basic       = FALSE       # For basic tier, no report generated
 
 if(!is.basic) {
@@ -91,12 +94,12 @@ threshold.ipc  = 25          # If IPC has Ct values greater than 25, it indicate
 sd.ipc         = 0.5         # Standard deviation greater than 0.5 indicates pipetting error and caution should be taken when interpreting results
 
 
-threshold.sp   = 30          # all Spike-Ins from all samples have Ct value lower than this value -> remove those samples with Sp Ct values > 30
+threshold.sp   = 33          # all Spike-Ins from all samples have Ct value lower than this value -> remove those samples with Sp Ct values > 30
 diff.sp        = 0.5         # only when is.RTsp = TRUE. larger difference is usually a sign of pipetting error.
 
 result.skip    = 46          # The number depends on the machine
 cutoff.max     = 33          # The first round filter, before normalization
-cutoff.min     = 0           # Can be changed based on customer' requirement
+cutoff.min     = 9           # Can be changed based on customer' requirement
 cutoff.sp      = 32          # The second round filter, for spike-in normalization
 
 threshold.impute    = 0.1    # No more than 10% missing value in miRNA

@@ -256,42 +256,43 @@ fun.sp.factor = function(sp) {
 # Calculate Spike-in factor: df.sp.factor
 index.sp = which(df.input.data.IPC.norm$miRNA %in% name.sp)
 SP = df.input.data.IPC.norm[index.sp, ]
+df.sp.factor = fun.sp.factor(SP) # RNA volume is not taken into consideration
+# ----- History ------
+#if(is.RTsp) {
+#    # Calculate the Spike-in Factor
+#    df.sp.factor = fun.sp.factor(SP)
+    
+#} else {
+#    # Read in RNA input volume and check the file: all samples should exist in RNA input volume
+#     RNAvol = read_excel(file.RNAvol)
+#     sample = colnames(df.input.data.sp)[-c(1,2)]
+#     index  = which(!(sample %in% RNAvol$sample))
+#     if(length(index > 0)) {
+#         stop(paste('Sorry, cannot find sample', 
+#                    sample[index], 
+#                    'in RNA volume excel file. Please Check RNA volume excel file'))
+#     } else {
+#         RNAvol = RNAvol[RNAvol$sample %in% sample, ]
+#     }
+#     
+#     # Calculate Input Scaling Factor
+#     RNAvol = RNAvol %>% dplyr::mutate(log2vol = log2(RNAvol$volume))
+#     mean.log2vol = mean(RNAvol$log2vol)
+#     RNAvol = RNAvol %>%
+#         dplyr::mutate(InputSF = RNAvol$log2vol - mean.log2vol)
+#     
+#     # Calculate RNA volume normalized SP
+#     SP.volNorm = SP
+#     num.sample = ncol(df.input.data.sp) - 2
+#     for (i in 1:num.sample) {
+#         SP.volNorm[, i+2] = SP.volNorm[, i+2] - RNAvol$InputSF[i]
+#     }
+#     
+#     # Calculate Spike-in factor: Cancer&Biofluid / PanoramiR
+#     df.sp.factor = fun.sp.factor(SP.volNorm)
+# } # two modes: normalized by RNA input volume / no normalization
 
-if(is.RTsp) {
-    # Calculate the Spike-in Factor
-    df.sp.factor = fun.sp.factor(SP)
-    
-} else {
-    # Read in RNA input volume and check the file: all samples should exist in RNA input volume
-    RNAvol = read_excel(file.RNAvol)
-    sample = colnames(df.input.data.sp)[-c(1,2)]
-    index  = which(!(sample %in% RNAvol$sample))
-    if(length(index > 0)) {
-        stop(paste('Sorry, cannot find sample', 
-                   sample[index], 
-                   'in RNA volume excel file. Please Check RNA volume excel file'))
-    } else {
-        RNAvol = RNAvol[RNAvol$sample %in% sample, ]
-    }
-    
-    # Calculate Input Scaling Factor
-    RNAvol = RNAvol %>% dplyr::mutate(log2vol = log2(RNAvol$volume))
-    mean.log2vol = mean(RNAvol$log2vol)
-    RNAvol = RNAvol %>%
-        dplyr::mutate(InputSF = RNAvol$log2vol - mean.log2vol)
-    
-    # Calculate RNA volume normalized SP
-    SP.volNorm = SP
-    num.sample = ncol(df.input.data.sp) - 2
-    for (i in 1:num.sample) {
-        SP.volNorm[, i+2] = SP.volNorm[, i+2] - RNAvol$InputSF[i]
-    }
-    
-    # Calculate Spike-in factor: Cancer&Biofluid / PanoramiR
-    df.sp.factor = fun.sp.factor(SP.volNorm)
-} # two modes: normalized by RNA input volume / no normalization
-
-# Normalization
+# Normalization -----
 index.sp = which(df.input.data.sp$miRNA %in% name.sp)
 df.input.data.SP.norm = df.input.data.sp[-index.sp, ]
 df.input.data.SP.norm = fun.norm(df.input.data.SP.norm, df.sp.factor)
