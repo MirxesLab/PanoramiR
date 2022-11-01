@@ -68,7 +68,7 @@ fun.df.factor = function(df) {
     
     df.factor = as.data.frame(df.factor) %>%
         dplyr::mutate(Group = group) %>%
-        dplyr::select('Group', tmp.colname)
+        dplyr::select('Group', all_of(tmp.colname))
     rownames(df.factor) = NULL
     
     return(df.factor)
@@ -167,7 +167,7 @@ if(is.RTsp) {
                                       'include')) %>%
         dplyr::mutate(sample = rownames(SP.sum)) %>%
         dplyr::mutate(threshold = threshold.sp) %>%
-        dplyr::select('sample', 'max.SP', 'threshold', 'status', tmp.colname)
+        dplyr::select('sample', 'max.SP', 'threshold', 'status', all_of(tmp.colname))
     
     # Save results
     write.csv(SP.sum, file.path(dir.out.tbl, 'SP_Check_Summary.csv'))

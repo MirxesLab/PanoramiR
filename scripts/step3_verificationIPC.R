@@ -56,7 +56,7 @@ IPC.sum = IPC.sum %>%
                                   'include')) %>%
     dplyr::mutate(sample = rownames(IPC.sum)) %>%
     dplyr::mutate(threshold = threshold.ipc) %>%
-    dplyr::select('sample', 'max.IPC', 'threshold', 'status', tmp.colname)
+    dplyr::select('sample', 'max.IPC', 'threshold', 'status', all_of(tmp.colname))
 
 write.csv(IPC.sum, 
            file.path(dir.out.tbl, 'IPC_Check_Summary.csv'))

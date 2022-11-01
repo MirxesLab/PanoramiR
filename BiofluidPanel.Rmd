@@ -23,6 +23,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ```{r}
 # Preparation
+source('scripts/config_change.R')
 source('scripts/config.R')           
 source('scripts/step1_ReadInSamplesheet.R')
 source('scripts/step2_ReadInRawData.R') 
@@ -47,6 +48,8 @@ if(is.basic) {
     source('scripts/step8_GlobalNorm.R')
 
     knitr::knit_exit()
+} else {
+    source('scripts/step14_SaveFig.R')
 }
 ```
 
@@ -157,6 +160,9 @@ After spike-in normalization, miRNAs in each groups with Ct value less than `r c
 ```{r fig.align='center', fig.cap= "Number of miRNA Detected in Samples"}
 ggplotly(p.num.miRNA)
 ```
+```{r results='hide'}
+fun.savefig(p.num.miRNA, 'Number_miRNA.png')
+```
 
 ### Number of miRNA Excluded from Later Analysis
 The miRNAs with missing values in more than 10% (> 10%) of the total number of samples are not analysed. Else, the missing values are imputed by the highest Ct value across the samples.\
@@ -221,6 +227,21 @@ if ("Comparison 3" %in% comparisons) {
 }
 ```
 
+```{r results='hide'}
+
+if ("Comparison 1" %in% comparisons) {
+    fun.savefig(ls.violin.1$ggplot, 'Violin_Comp1.png')
+}
+
+if ("Comparison 2" %in% comparisons) {
+    fun.savefig(ls.violin.2$ggplot, 'Violin_Comp2.png')
+}
+
+if ("Comparison 3" %in% comparisons) {
+    fun.savefig(ls.violin.3$ggplot, 'Violin_Comp3.png')
+}
+```
+
 # MiRNAs Overview
 Unsupervised learning methods such as principal component analysis and clustering reduce the dimensions of the underlying differences among samples, allowing separation of observations with distinct differences. This scale of separation is often observed when there is an overall large difference among comparison groups, such as when the analysis is performed on diseased and healthy tissue samples. However, this is often not observed when the analysis is performed on blood samples, for that the miRNAs from diseased cells often represent only a minute fraction of the miRNAs content in the blood. Therefore, for blood sample, the outcome of unsupervised learning methods is expectedly to show no distinction in the observations among the comparison groups, and warrants further investigation on sample quality if clear distinction is observed.
 
@@ -258,6 +279,20 @@ if('Comparison 3' %in% comparisons) {
 }
 ```
 
+```{r results='hide'}
+if ("Comparison 1" %in% comparisons) {
+    fun.savefig(p.pca.1, 'PCA_Comp1.png')
+}
+
+if ("Comparison 2" %in% comparisons) {
+    fun.savefig(p.pca.2, 'PCA_Comp2.png')
+}
+
+if ("Comparison 3" %in% comparisons) {
+     fun.savefig(p.pca.3, 'PCA_Comp3.png')
+}
+```
+
 ## Hierachical Clustering Analysis {.tabset .tabset-pills}
 Hierarchical clustering is performed on the normalized miRNA expression data to group clusters of similar miRNA expression together.
 
@@ -276,6 +311,16 @@ p.heatmap.s2s = pheatmap(sample.dist.matrix,
                          annotation_col = df.anno.all,
                          annotation_names_col = FALSE,
                          main = "Euclidean distance of samples")
+```
+
+```{r results='hide'}
+png(file.path(dir.out.fig, 'Heatmap_All.png'), width = 1000, height = 800, res = 150)
+    p.heatmap.all
+dev.off()
+
+png(file.path(dir.out.fig, 'Heatmap_s2s.png'), width = 1000, height = 800, res = 150)
+    p.heatmap.s2s
+dev.off()
 ```
 
 # Differential Expression Analysis
@@ -358,6 +403,20 @@ if('Comparison 3' %in% comparisons) {
 }
 ```
 
+```{r results='hide'}
+if ("Comparison 1" %in% comparisons) {
+    fun.savefig(p.scatter.1, 'Scatter_Comp1.png')
+}
+
+if ("Comparison 2" %in% comparisons) {
+    fun.savefig(p.scatter.2, 'Scatter_Comp2.png')
+}
+
+if ("Comparison 3" %in% comparisons) {
+    fun.savefig(p.scatter.3, 'Scatter_Comp3.png')
+}
+```
+
 ## Waterfall plot {.tabset .tabset-pills}
 The waterfall plot displays statistically significant (p < `r threshold.DE.pvalue`) dCt values between the treatment and control groups. The red bars represent miRNA whose dCt greater than or equal to `r threshold.DE.dCt`, and the blue bars represent miRNA whose dCt less than or equal to `r threshold.DE.dCt`.
 
@@ -382,6 +441,20 @@ if('Comparison 2' %in% comparisons) {
 if('Comparison 3' %in% comparisons) {
     p.bar.dCt.3 = fun.plot.dCt(ls.diff.3, 'Comparison 3')
     ggplotly(p.bar.dCt.3)
+}
+```
+
+```{r results='hide'}
+if ("Comparison 1" %in% comparisons) {
+     fun.savefig(p.bar.dCt.1, 'WaterFall_Comp1.png')
+}
+
+if ("Comparison 2" %in% comparisons) {
+    fun.savefig(p.bar.dCt.2, 'WaterFall_Comp2.png')
+}
+
+if ("Comparison 3" %in% comparisons) {
+    fun.savefig(p.bar.dCt.3, 'WaterFall_Comp3.png')
 }
 ```
 
@@ -411,6 +484,21 @@ if ('Comparison 3' %in% comparisons) {
     ggplotly(p.volcano.3)
 }
 ```
+
+```{r results='hide'}
+if ("Comparison 1" %in% comparisons) {
+    fun.savefig(p.volcano.1, 'Volcano_Comp1.png')
+}
+
+if ("Comparison 2" %in% comparisons) {
+    fun.savefig(p.volcano.2, 'Volcano_Comp2.png')
+}
+
+if ("Comparison 3" %in% comparisons) {
+    fun.savefig(p.volcano.3, 'Volcano_Comp3.png')
+}
+```
+
 
 ```{r}
 # comp.tmp = comparisons[comparisons != 'Comparison 0']

@@ -21,6 +21,7 @@ library(plotly) # For interactive
 library(Gmisc)
 library(glue)
 library(grid)
+library(cowplot)
 
 library(knitr)
 library(kableExtra)
@@ -29,19 +30,14 @@ library(kableExtra)
 
 # Set Directory
 # --------------------------- #
-dir.top      = '/Users/plateau/Documents/GitHub/PanoramiR'
-dir.input    = 'input_ncRNA'
-dir.out      = 'output'
-
 dir.out.fig  = file.path(dir.out, 'figure')
 dir.out.tbl  = file.path(dir.out, 'table')
 
 dir.resource.fig = 'resources/figure'
 dir.resource.tbl = 'resources/table'
-dir.resource.qc  = 'resources/QC_data'
 
 # Set working directory
-setwd(dir.top)
+# setwd(dir.top)
 
 # Create directory for output
 dir.create(dir.out.tbl, recursive = TRUE, showWarnings = FALSE)
@@ -52,9 +48,6 @@ dir.create(dir.out.tbl, recursive = TRUE, showWarnings = FALSE)
 # Pattern of input file names: 2020-11-16_093607 2007 001_002_Results.xlsx [Biofluid]
     # Experiment Time: 2020-11-16_093607
     # Unique sample ID: 2007 001 or 2007 001_002 [Recorded in sample manifest form]
-##### Input
-file.samplesheet = file.path(dir.input, 'Sample Manifest Form.xlsx')
-arg.pipeline     = 'PanoramiR' #Option: ['Cancer', 'Biofluid', 'PanoramiR']
 
 ##### Common Resources
 file.ref.target  = file.path(dir.resource.tbl, 'Predicted_Targets_Human_Filtered_Rearranged_GeneID.txt') 
@@ -83,24 +76,20 @@ if(arg.pipeline == 'PanoramiR') { # PanoramiR Pipeline
 
 # Set parameters
 # --------------------------- #
-is.RTsp        = TRUE        # Whether the spike-in is Reverse Transcript Spike-in -> Whether Normalized by RNA input volume
-is.basic       = FALSE       # For basic tier, no report generated
-
 if(!is.basic) {
     dir.create(dir.out.fig, recursive = TRUE, showWarnings = FALSE)
 }
 
-threshold.ipc  = 25          # If IPC has Ct values greater than 25, it indicates qPCR reaction has failed. -> remove those samples
 sd.ipc         = 0.5         # Standard deviation greater than 0.5 indicates pipetting error and caution should be taken when interpreting results
-
-
-threshold.sp   = 33          # all Spike-Ins from all samples have Ct value lower than this value -> remove those samples with Sp Ct values > 30
 diff.sp        = 0.5         # only when is.RTsp = TRUE. larger difference is usually a sign of pipetting error.
 
 result.skip    = 46          # The number depends on the machine
 cutoff.max     = 33          # The first round filter, before normalization
 cutoff.min     = 9           # Can be changed based on customer' requirement
 cutoff.sp      = 32          # The second round filter, for spike-in normalization
+
+threshold.ipc  = 25          # If IPC has Ct values greater than 25, it indicates qPCR reaction has failed. -> remove those samples
+threshold.sp   = 30          # all Spike-Ins from all samples have Ct value lower than this value -> remove those samples
 
 threshold.impute    = 0.1    # No more than 10% missing value in miRNA
 threshold.DE.pvalue = 0.05   # The p value of T test
