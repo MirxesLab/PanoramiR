@@ -8,11 +8,9 @@ library(dplyr)
 library(readxl)
 library(stringi)
 library(stringr)
-library(limma)
 
 library(org.Hs.eg.db)
 library(topGO)
-library(DESeq2) # Could be Limma
 
 library(pheatmap)
 library(RColorBrewer)
