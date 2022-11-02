@@ -24,8 +24,8 @@
 ls.compare.group <- list()
 n.comp.group = length(comparisons[comparisons != 'Comparison 0'])
 for (i in 1:sum(n.comp.group)) {
-    df.tmp = df.samplesheet[,c(1,(1+i))]  # sample, comparison
-    df.tmp = df.tmp[df.tmp$Samples %in% colnames(df.input.data.GlobalNorm), ]
+    df.tmp = df.samplesheet[,c(5,(1+i))]  # sample, comparison
+    df.tmp = df.tmp[df.tmp$`Unique Sample ID` %in% colnames(df.input.data.GlobalNorm), ]
     df.tmp = df.tmp %>%
         dplyr::filter(!is.na(df.tmp[2]))
     
@@ -58,8 +58,8 @@ fun.DEanalysis.Ttest = function(comp) {
     # Group A is the test sample, Group B is the control sample
     # dCt = ctrl - exp dCt < 0: downregulated; dCt > 0: upregulated
     df.compare = ls.compare.group[[comp]]
-    groupA.sample = df.compare$Samples[df.compare[comp] == 'A']
-    groupB.sample = df.compare$Samples[df.compare[comp] == 'B']
+    groupA.sample = df.compare$`Unique Sample ID`[df.compare[comp] == 'A']
+    groupB.sample = df.compare$`Unique Sample ID`[df.compare[comp] == 'B']
     
     df.miRNA.A = df.input.data.GlobalNorm[, c('miRNA', groupA.sample)]
     df.miRNA.B = df.input.data.GlobalNorm[, c('miRNA', groupB.sample)]
@@ -112,63 +112,65 @@ fun.DEanalysis.Ttest = function(comp) {
     return(ls.diff)
 }
 
-fun.DEanalysis.limma = function(comp) {
-    ls.diff = list()
-    
-    df.compare = ls.compare.group[[comp]]
-    df.compare = ls.compare.group[[comp]]
-    groupA.sample = df.compare$Samples[df.compare[comp] == 'A']
-    groupB.sample = df.compare$Samples[df.compare[comp] == 'B']
-    
-    df.miRNA.A = df.input.data.GlobalNorm[, c('miRNA', groupA.sample)]
-    df.miRNA.B = df.input.data.GlobalNorm[, c('miRNA', groupB.sample)]
-    
-    df.summary.A = fun.summary(df.miRNA.A, 'A')
-    df.summary.B = fun.summary(df.miRNA.B, 'B')
-    df.summary  = inner_join(df.summary.A, df.summary.B, by = 'miRNA')
-    
-    # metadata 
-    meta = df.compare
-    colnames(meta) = c('sample', 'condition')
-    meta$condition = factor(meta$condition, levels = c('A', 'B'))
-    
-    # contrast matrix
-    design = model.matrix(~ 0 + meta$condition)
-    colnames(design) = c('A', 'B')
-    contrast_martix = makeContrasts(compare = B - A,
-                                    levels = design)
-    df.miRNA = df.input.data.GlobalNorm %>%
-        tibble::column_to_rownames('miRNA')
-    
-    # DE analysis with limma
-    fit = lmFit(df.miRNA, design)
-    fit2 = contrasts.fit(fit, contrasts = contrast_martix)
-    ebayes = eBayes(fit2)
-    
-    # result
-    name.sum = colnames(df.summary)
-    df.res.order = topTable(ebayes, number = Inf) %>% 
-        tibble::rownames_to_column('miRNA') %>%
-        dplyr::select('miRNA', 'logFC', 'P.Value', 'adj.P.Val')
-    df.res.order = inner_join(df.res.order, df.summary, by = 'miRNA')
-    colnames(df.res.order) = c('miRNA', 'dCt', 'pvalue', 'adj.pvalue', name.sum[-1])
 
-    df.res.filter = df.res.order %>%
-        dplyr::filter(adj.pvalue <= threshold.DE.pvalue & abs(dCt) >= threshold.DE.dCt)
-    rownames(df.res.filter) = NULL
-    
-    fdr = TRUE
-    
-    ls.diff$groupA     = df.miRNA.A
-    ls.diff$groupB     = df.miRNA.B
-    ls.diff$res.order  = df.res.order
-    ls.diff$res.filter = df.res.filter
-    ls.diff$fdr        = fdr
-    
-    return(ls.diff)
-}
+# ----- History Limma -----
+# fun.DEanalysis.limma = function(comp) {
+#     ls.diff = list()
+#     
+#     df.compare = ls.compare.group[[comp]]
+#     df.compare = ls.compare.group[[comp]]
+#     groupA.sample = df.compare$Samples[df.compare[comp] == 'A']
+#     groupB.sample = df.compare$Samples[df.compare[comp] == 'B']
+#     
+#     df.miRNA.A = df.input.data.GlobalNorm[, c('miRNA', groupA.sample)]
+#     df.miRNA.B = df.input.data.GlobalNorm[, c('miRNA', groupB.sample)]
+#     
+#     df.summary.A = fun.summary(df.miRNA.A, 'A')
+#     df.summary.B = fun.summary(df.miRNA.B, 'B')
+#     df.summary  = inner_join(df.summary.A, df.summary.B, by = 'miRNA')
+#     
+#     # metadata 
+#     meta = df.compare
+#     colnames(meta) = c('sample', 'condition')
+#     meta$condition = factor(meta$condition, levels = c('A', 'B'))
+#     
+#     # contrast matrix
+#     design = model.matrix(~ 0 + meta$condition)
+#     colnames(design) = c('A', 'B')
+#     contrast_martix = makeContrasts(compare = B - A,
+#                                     levels = design)
+#     df.miRNA = df.input.data.GlobalNorm %>%
+#         tibble::column_to_rownames('miRNA')
+#     
+#     # DE analysis with limma
+#     fit = lmFit(df.miRNA, design)
+#     fit2 = contrasts.fit(fit, contrasts = contrast_martix)
+#     ebayes = eBayes(fit2)
+#     
+#     # result
+#     name.sum = colnames(df.summary)
+#     df.res.order = topTable(ebayes, number = Inf) %>% 
+#         tibble::rownames_to_column('miRNA') %>%
+#         dplyr::select('miRNA', 'logFC', 'P.Value', 'adj.P.Val')
+#     df.res.order = inner_join(df.res.order, df.summary, by = 'miRNA')
+#     colnames(df.res.order) = c('miRNA', 'dCt', 'pvalue', 'adj.pvalue', name.sum[-1])
+# 
+#     df.res.filter = df.res.order %>%
+#         dplyr::filter(adj.pvalue <= threshold.DE.pvalue & abs(dCt) >= threshold.DE.dCt)
+#     rownames(df.res.filter) = NULL
+#     
+#     fdr = TRUE
+#     
+#     ls.diff$groupA     = df.miRNA.A
+#     ls.diff$groupB     = df.miRNA.B
+#     ls.diff$res.order  = df.res.order
+#     ls.diff$res.filter = df.res.filter
+#     ls.diff$fdr        = fdr
+#     
+#     return(ls.diff)
+# }
 
-# Generate Figures
+# Generate Figures -----
 cols.sig.DE = c("sig.up" = col.others[1], "sig.down" = col.others[2], "ns" = col.grey)
 cols.DE = c("up" = col.others[1], "down" = col.others[2], "ns" = col.grey)
 

@@ -55,10 +55,16 @@ fun.targetGene = function(ls.diff) {
         df.miRNA2gene.show = data.frame() 
         for (i in miRNA.select) {
             # Selected 5 target genes randomly
-            index = sample(which(miRNA2gene.sig$miRNA == i),
-                           size = 5)
-            df.miRNA2gene.show = rbind(df.miRNA2gene.show,
-                                       miRNA2gene.sig[index, ])
+            tmp   = miRNA2gene.sig[miRNA2gene.sig$miRNA == i, ]
+            if(nrow(tmp < 5)) {
+                df.miRNA2gene.show = rbind(df.miRNA2gene.show,
+                                           tmp)
+            } else {
+                index = sample(which(miRNA2gene.sig$miRNA == i),
+                               size = 5)
+                df.miRNA2gene.show = rbind(df.miRNA2gene.show,
+                                           miRNA2gene.sig[index, ])
+            }
         }
         rownames(df.miRNA2gene.show) = NULL
         

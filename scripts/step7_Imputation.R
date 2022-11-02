@@ -21,10 +21,10 @@ num.NA.miRNA        = apply(df.input.data.Filt2[, -1],
                             2, 
                             function(x) sum(is.na(x)))
 
-df.detect = data.frame(sample    = paste0('sample_', colnames(df.input.data.Filt2)[-1]),
+df.detect = data.frame(sample    = colnames(df.input.data.Filt2)[-1],
                        num.miRNA = num.NA.miRNA,
                        status    = 'Undetected') %>% 
-    rbind(data.frame(sample = paste0('sample_', colnames(df.input.data.Filt2)[-1]),
+    rbind(data.frame(sample      = colnames(df.input.data.Filt2)[-1],
                      num.miRNA = num.miRNA - num.NA.miRNA,
                      status = 'Detected'))
 
@@ -38,8 +38,8 @@ p.num.miRNA = ggplot(data = df.detect,
     theme_classic() +
     theme(axis.text.x = element_text(angle = 270, vjust = 0.5, hjust = 1)) +
     ggtitle('The number of miRNA detected') +
-    labs(y = 'Number of miRNA')
-
+    labs(y = 'Number of miRNA', x = 'sample (unique ID)')
+p.num.miRNA
 
 
                     # --------------------------------- #
@@ -86,16 +86,12 @@ rownames(df.miss) = NULL
                     #           Save results             #
                     # ---------------------------------- #
 df.exclude.miRNA = df.input.data.Filt2[index.remove, ]
-tmp.colname      = colnames(df.exclude.miRNA)[-1]
-tmp.colname      = paste('sample', tmp.colname)
 
 df.exclude.miRNA = df.exclude.miRNA %>%
     dplyr::mutate('Missing values' = apply(df.exclude.miRNA,
                                            1,
                                            function(x) sum(is.na(x)))) %>%
     dplyr::mutate('Threshold' = threshold.sample)
-colnames(df.exclude.miRNA) = c('miRNA', tmp.colname, 'Missing Values', 'Threshold')
-
 write.csv(df.exclude.miRNA, file.path(dir.out.tbl,
                                        'Excluded miRNA (before Global Norm).csv'))
 

@@ -57,15 +57,17 @@ comparisons <- sapply(1:3,
 ls.compare.group <- list()
 
 for (i in 1:sum(n.comp.group)) {
-    df.tmp = df.samplesheet[,c(1,(1+i), 7)]  # sample, comparison, sample type
+    df.tmp = df.samplesheet[,c(1,(1+i), 5, 7)]  # sample, sample id, comparison, sample type
+    colnames(df.tmp)[3] = "SampleID"
     df.tmp = df.tmp %>%
         dplyr::filter(!is.na(df.tmp[2]))
     
     # Samples with the same sample type can be compared
-    if(length(unlist(unique(df.tmp[,3]))) > 1) {
+    if(length(unlist(unique(df.tmp[,"Sample Type"]))) > 1) {
         stop('Sorry, only samples with the same sample type can be comapred')
     } else {
-        df.tmp = df.tmp[, c(1,2)]
+        df.tmp = df.tmp[, c(3,2)]
+        colnames(df.tmp)[1] = 'Samples'
     }
     ls.compare.group[[i]] <- df.tmp    
 }

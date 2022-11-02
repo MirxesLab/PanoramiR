@@ -42,7 +42,7 @@ fun.plot.violin = function(comp, cols) {
     df.input.data.GlobalNorm.tmp = t(df.input.data.GlobalNorm[, -1])
     colnames(df.input.data.GlobalNorm.tmp) = df.input.data.GlobalNorm$miRNA
     df.input.data.GlobalNorm.tmp = as.data.frame(df.input.data.GlobalNorm.tmp) %>%
-        dplyr::mutate(Samples = as.numeric(colnames(df.input.data.GlobalNorm)[-1])) %>%
+        dplyr::mutate(Samples = colnames(df.input.data.GlobalNorm)[-1]) %>%
         dplyr::select(Samples, df.input.data.GlobalNorm$miRNA)
     
     df.tmp = dplyr::inner_join(df.compare, df.input.data.GlobalNorm.tmp,by = "Samples")
@@ -61,8 +61,6 @@ fun.plot.violin = function(comp, cols) {
         dplyr::mutate(group =  ifelse(Var2 %in% groupA.sample, 'A', 'B'))
     colnames(df.tmp.melt) = c('miRNA', 'sample', 'Ct', 'group')
     
-    
-    df.tmp.melt$sample = paste0('sample_', df.tmp.melt$sample)
     df.tmp.melt$sample = factor(df.tmp.melt$sample,
                                 levels = unique(df.tmp.melt$sample))
     df.tmp.melt$group = factor(df.tmp.melt$group)
@@ -77,6 +75,7 @@ fun.plot.violin = function(comp, cols) {
         theme(axis.text.x = element_text(angle = 270, hjust = 1, vjust = 0.5)) +
         scale_fill_manual(values = alpha(cols, 0.5)) +
         ylab("Ct Values") +
+        xlab("sample (unique ID)")
         ggtitle(paste0("miRNA Expression Level ( ", comp, " )"))
 
     fig.violin = df.tmp.melt %>%
@@ -92,7 +91,7 @@ fun.plot.violin = function(comp, cols) {
         layout(title = list(text = paste('miRNA expression level in each sample (',
                                          comp,
                                          ')')),
-               xaxis = list(title = 'sample', tickangle = 90),
+               xaxis = list(title = 'sample (unique ID)', tickangle = 90),
                yaxis = list(title = 'Ct Values', zeroline = F))
     ls.violin$ggplot = p.violin
     ls.violin$plotly = fig.violin
@@ -101,9 +100,7 @@ fun.plot.violin = function(comp, cols) {
 
 # Save Results
 # -------------------------- #
-tmp = df.input.data.GlobalNorm
-colnames(tmp) = c('miRNA', paste('sample', colnames(tmp)[-1]))
-write.csv(tmp, file.path(dir.out.tbl, 'Data GlobalNorm.csv'))
+write.csv(df.input.data.GlobalNorm, file.path(dir.out.tbl, 'Data GlobalNorm.csv'))
 
 
 

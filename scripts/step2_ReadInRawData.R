@@ -41,7 +41,7 @@ fun.readRes = function(i) {
                              'Results', 
                              skip = result.skip)
         res.ext = res.ori[, c('Well Position', 'CT')]
-        colnames(res.ext) = c('Position', no.sample)
+        colnames(res.ext) = c('Position', id.sample)
         str_sub(res.ext$Position[which(str_length(res.ext$Position) == 2)], 
                 2, 
                 1) = 0 # A1 -> A01
@@ -70,7 +70,7 @@ df.input.data[, -1] = apply(df.input.data[, -1], 2, as.numeric)
 # Link CT value with miRNA ID by the 'Position'
 df.input.data = df.input.data %>%
     dplyr::inner_join(miRList, by = 'Position') %>%
-    dplyr::select('Group', 'miRNA', as.character(df.sampleID$Samples))
+    dplyr::select('Group', 'miRNA', df.sampleID$SampleID)
 
 # Split input data [Only for Biofluid]
 if(arg.pipeline == 'Biofluid') {
@@ -127,10 +127,4 @@ if(arg.pipeline == 'Biofluid') {
 
 # ---------------------------------------------------------------------------- #
 # Save Results
-tmp = df.input.data
-tmp.colname = colnames(tmp)[-c(1,2)]
-colnames(tmp) = c(colnames(tmp)[c(1,2)],
-                  paste('sample ', tmp.colname))
-
-write.csv(tmp,
-           file.path(dir.out.tbl, 'Data Raw.csv'))
+write.csv(df.input.data, file.path(dir.out.tbl, 'Data Raw.csv'))

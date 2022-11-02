@@ -28,9 +28,7 @@ df.input.data.Filt2[, -c(1,2)] = apply(df.input.data.Filt2[, -c(1,2)],
 # test = apply(df.input.data.SP.norm[,-c(1,2)], 2, function(x) length(which(x>cutoff.sp)))
 # NA1 + test == NA2
 
-tmp = df.input.data.Filt2
-colnames(tmp)[-c(1,2)] = paste0('sample ', colnames(tmp)[-c(1,2)])
-write.csv(tmp, file.path(dir.out.tbl, 'Data SP-inNorm.csv'))
+write.csv(df.input.data.Filt2, file.path(dir.out.tbl, 'Data SP-inNorm.csv'))
 
 
 

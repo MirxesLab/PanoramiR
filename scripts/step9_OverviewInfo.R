@@ -23,7 +23,7 @@ df.input.data.GlobalNorm.tmp = t(df.input.data.GlobalNorm[, -1])
 colnames(df.input.data.GlobalNorm.tmp) = df.input.data.GlobalNorm$miRNA
 
 df.input.data.GlobalNorm.tmp = as.data.frame(df.input.data.GlobalNorm.tmp) %>%
-    dplyr::mutate(Samples = as.numeric(colnames(df.input.data.GlobalNorm)[-1])) %>%
+    dplyr::mutate(Samples = colnames(df.input.data.GlobalNorm)[-1]) %>%
     dplyr::select(Samples, df.input.data.GlobalNorm$miRNA)
 
 # PCA Plot
@@ -97,14 +97,13 @@ if(length(index) != 0) {
 
 
 rownames(allmiRNA) = df.input.data.GlobalNorm$miRNA
-colnames(allmiRNA) = paste0('sample_', colnames(df.input.data.GlobalNorm)[-1])
+
 
 # Prepare annotation data frame for heatmap
-df.anno.all = df.samplesheet[, c('Samples', comparisons[comparisons != "Comparison 0"])]
-df.anno.all = df.anno.all[df.anno.all$Samples %in% colnames(df.input.data.GlobalNorm)[-1], ] %>%
-    tibble::column_to_rownames('Samples')
+df.anno.all = df.samplesheet[, c('Unique Sample ID', comparisons[comparisons != "Comparison 0"])]
+df.anno.all = df.anno.all[df.anno.all$`Unique Sample ID` %in% colnames(df.input.data.GlobalNorm)[-1], ] %>%
+    tibble::column_to_rownames('Unique Sample ID')
 
-rownames(df.anno.all) = paste0('sample_', colnames(df.input.data.GlobalNorm)[-1])
 
 # Prepare annotation color for heatmap
 color.anno.all = list('Comparison 1' = c(A = col.compare.1[1], B = col.compare.1[2]),
@@ -116,7 +115,6 @@ color.anno.all = color.anno.all[comparisons[comparisons != "Comparison 0"]]
 # ------------------------------------- #
 sample.dist = dist(df.input.data.GlobalNorm.tmp[, -1])
 sample.dist.matrix = as.matrix(sample.dist) 
-colnames(sample.dist.matrix) = paste0('sample_', colnames(sample.dist.matrix))
-rownames(sample.dist.matrix) = colnames(sample.dist.matrix)
+
 
 
