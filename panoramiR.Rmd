@@ -493,13 +493,13 @@ if ("Comparison 3" %in% comparisons) {
 ```
 <!-- `r description` -->
 
-# Gene Target Analysis
+# Predicted Gene Target Analysis
 ```{r}
 source('scripts/step11_targetgene.R')
 ```
 
-## Genes Targeted by Selected miRNA {.tabset .tabset-pills}
-miRNAs found differentially expressed between the sample groups (fold change \>= `r threshold.DE.dCt` and p-value =\< `r threshold.DE.pvalue`) are subjected to gene target analysis using mirTarBase [@RN1]. A subset of the gene targets is shown below. For a list of all genes targeted by the differentially expressed miRNAs, please refer to the `target_gene_n.csv` file (where n is the comparison number).
+## Predicted Genes Targeted by Selected miRNA {.tabset .tabset-pills}
+miRNAs found differentially expressed between the sample groups (fold change \>= `r threshold.DE.dCt` and p-value =\< `r threshold.DE.pvalue`) are subjected to predicted gene target analysis using miRTarBase [@RN1]. A subset of the predicted gene targets is shown below. For a list of all predicted genes targeted by the differentially expressed miRNAs, please refer to the `target_gene_n.csv` file (where n is the comparison number).
 
 ### `r if('Comparison 1' %in% comparisons) {comparisons[1]}` {.unnumbered}
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
