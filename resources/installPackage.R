@@ -12,7 +12,7 @@ install.packages('grid')
 install.packages('knitr')
 install.packages("kableExtra")
 install.packages("rmdformats")
-
+install.packages('reshape2')
 BiocManager::install('org.Hs.eg.db')
 BiocManager::install('topGO')
 
