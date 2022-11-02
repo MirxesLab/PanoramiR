@@ -33,47 +33,26 @@ fun.readRes = function(i) {
     # Record sample and unique sample id
     no.sample = df.sampleID$Samples[i]
     id.sample = df.sampleID$SampleID[i]
-    file      = grep(id.sample, list.files(dir.input, all.files = FALSE), value = TRUE)
-    
+    pat       = paste0(id.sample, '_')
+    file      = grep(pat, list.files(dir.input, all.files = FALSE), value = TRUE)
     
     # Read in raw data
     if (length(file) != 0 ){
-        if(length(file) == 1) {
-            res.ori = read_excel(file.path(dir.input, file), 
-                                 'Results', 
-                                 skip = result.skip)
-            res.ext = res.ori[, c('Well Position', 'CT')]
-            colnames(res.ext) = c('Position', id.sample)
-            str_sub(res.ext$Position[which(str_length(res.ext$Position) == 2)], 
-                    2, 
-                    1) = 0 # A1 -> A01
-        } else {
-            res.ext = data.frame()
-            for (j in 1:length(file)) {
-                id.sample.tmp = paste0(id.sample, '_', j)
-                res.ori.tmp = read_excel(file.path(dir.input, file[j]), 
-                                     'Results', 
-                                     skip = result.skip)
-                res.ext.tmp = res.ori.tmp[, c('Well Position', 'CT')]
-                colnames(res.ext.tmp) = c('Position', id.sample.tmp)
-                str_sub(res.ext$Position[which(str_length(res.ext$Position) == 2)], 
-                        2, 
-                        1) = 0 # A1 -> A01
-                if (j == 1) {
-                    res.ext = res.ext.tmp
-                } else {
-                    res.ext = inner_join(res.ext, res.ext.tmp, by = 'Position')
-                }
-                    
-                
-            }
-        }
-
+        res.ori = read_excel(file.path(dir.input, file), 
+                             'Results', 
+                             skip = result.skip)
+        res.ext = res.ori[, c('Well Position', 'CT')]
+        colnames(res.ext) = c('Position', id.sample)
+        str_sub(res.ext$Position[which(str_length(res.ext$Position) == 2)], 
+                2, 
+                1) = 0 # A1 -> A01
     } else {
         res.ext = data.frame(Position = miRList$Position,
                              CT = NA)
         colnames(res.ext) = c('Position', no.sample)
     }
+    
+    res.ext = res.ext[1:nrow(miRList), ]
     return(res.ext)
 }
 
