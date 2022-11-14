@@ -35,6 +35,7 @@ fun.plot.violin = function(comp, cols) {
     ls.violin = list()
     # Data frame recording the Sample and Comparison Group
     df.compare = ls.compare.group[[comp]]
+    
     groupA.sample = df.compare$Samples[df.compare[, 2] == "A"]
     groupB.sample = df.compare$Samples[df.compare[, 2] == "B"]
     
@@ -44,6 +45,10 @@ fun.plot.violin = function(comp, cols) {
     df.input.data.GlobalNorm.tmp = as.data.frame(df.input.data.GlobalNorm.tmp) %>%
         dplyr::mutate(Samples = colnames(df.input.data.GlobalNorm)[-1]) %>%
         dplyr::select(Samples, df.input.data.GlobalNorm$miRNA)
+    
+    if(class(df.compare$Samples) != class(df.input.data.GlobalNorm.tmp$Samples)) {
+        df.compare$Samples = as.character(df.compare$Samples)
+    }
     
     df.tmp = dplyr::inner_join(df.compare, df.input.data.GlobalNorm.tmp,by = "Samples")
     

@@ -36,6 +36,9 @@ fun.pca = function(comp, cols) {
     df.compare = ls.compare.group[[comp]]
     
     # Prepare the Data Frame for PCA
+    if(class(df.compare$Samples) != class(df.input.data.GlobalNorm.tmp$Samples)) {
+        df.compare$Samples = as.character(df.compare$Samples)
+    }
     df.tmp = dplyr::inner_join(df.compare, df.input.data.GlobalNorm.tmp, by = 'Samples')
     
     # PCA Analysis
