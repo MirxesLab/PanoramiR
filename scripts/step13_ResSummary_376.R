@@ -14,7 +14,7 @@ fun.plot.summary = function(ls.diff, ls.miRNA2gene, ls.GOsum, comp) {
     # comp is the 'Comparison n'
     
     # Drawing Box
-    num.miRNA.all = nrow(df.input.data.Filt1)
+    num.miRNA.all = 376
     allmiRNA      = boxGrob(glue("ID3EAL PanoramiR panel",
                                  "{num} miRNAs",
                                  num = txtInt(num.miRNA.all),
@@ -47,7 +47,7 @@ fun.plot.summary = function(ls.diff, ls.miRNA2gene, ls.GOsum, comp) {
         num.DE.down = sum(ls.diff$res.filter$dCt < 0)
         
         DEmiRNA = boxGrob(glue("{num} miRNAs have significant expression difference",
-                               'p <= {pvalue}, abs(dCt) <= {dCt}',
+                               'p < {pvalue}, abs(dCt) >= {dCt}',
                                '{up} miRNAs upregulated',
                                '{down} miRNAs downregulated',
                                num = txtInt(num.DE.miRNA),

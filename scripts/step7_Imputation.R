@@ -38,8 +38,7 @@ p.num.miRNA = ggplot(data = df.detect,
     theme_classic() +
     theme(axis.text.x = element_text(angle = 270, vjust = 0.5, hjust = 1)) +
     ggtitle('The number of miRNA detected') +
-    labs(y = 'Number of miRNA', x = 'sample (unique ID)')
-p.num.miRNA
+    labs(y = 'Number of miRNA', x = 'sample')
 
 
                     # --------------------------------- #

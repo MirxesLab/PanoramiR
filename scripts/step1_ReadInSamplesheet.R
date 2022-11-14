@@ -13,7 +13,7 @@
 # =========================================================================== #
 
 # Read in sample sheet
-df.samplesheet.ori = read_excel(file.samplesheet, skip = 33)
+df.samplesheet.ori = read_excel(file.samplesheet, skip = skip.samplesheet)
 
 # Check Sample Sheet
 keep.idx <- which(!apply(apply(df.samplesheet.ori[,2:7],
@@ -31,9 +31,9 @@ df.samplesheet = df.samplesheet[!is.na(df.samplesheet[, 5]), ]
 colnames(df.samplesheet)[1] <- "Samples"
 
 ## Check sample name
-if (!is.numeric(df.samplesheet$Samples)) {
-    stop("Sorry, sample name should be number")
-}
+# if (!is.numeric(df.samplesheet$Samples)) {
+#     stop("Sorry, sample name should be number")
+# }
 
 
 ## Check the comparison 1 ~ 3
@@ -66,7 +66,7 @@ for (i in 1:sum(n.comp.group)) {
     if(length(unlist(unique(df.tmp[,"Sample Type"]))) > 1) {
         stop('Sorry, only samples with the same sample type can be comapred')
     } else {
-        df.tmp = df.tmp[, c(3,2)]
+        df.tmp = df.tmp[, c(1,2)]
         colnames(df.tmp)[1] = 'Samples'
     }
     ls.compare.group[[i]] <- df.tmp    

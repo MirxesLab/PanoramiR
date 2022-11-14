@@ -48,7 +48,7 @@ fun.plot.summary = function(ls.diff, ls.miRNA2gene, ls.GOsum, comp) {
         num.DE.down = sum(ls.diff$res.filter$dCt < 0)
         
         DEmiRNA = boxGrob(glue("{num} miRNAs have significant expression difference",
-                               'p <= {pvalue}, abs(dCt) <= {dCt}',
+                               'p <= {pvalue}, abs(dCt) >= {dCt}',
                                '{up} miRNAs upregulated',
                                '{down} miRNAs downregulated',
                                num = txtInt(num.DE.miRNA),

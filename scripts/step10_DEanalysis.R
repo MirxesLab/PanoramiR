@@ -24,8 +24,8 @@
 ls.compare.group <- list()
 n.comp.group = length(comparisons[comparisons != 'Comparison 0'])
 for (i in 1:sum(n.comp.group)) {
-    df.tmp = df.samplesheet[,c(5,(1+i))]  # sample, comparison
-    df.tmp = df.tmp[df.tmp$`Unique Sample ID` %in% colnames(df.input.data.GlobalNorm), ]
+    df.tmp = df.samplesheet[,c(1,(1+i))]  # sample, comparison
+    df.tmp = df.tmp[df.tmp$Samples %in% colnames(df.input.data.GlobalNorm), ]
     df.tmp = df.tmp %>%
         dplyr::filter(!is.na(df.tmp[2]))
     
@@ -58,8 +58,8 @@ fun.DEanalysis.Ttest = function(comp) {
     # Group A is the test sample, Group B is the control sample
     # dCt = ctrl - exp dCt < 0: downregulated; dCt > 0: upregulated
     df.compare = ls.compare.group[[comp]]
-    groupA.sample = df.compare$`Unique Sample ID`[df.compare[comp] == 'A']
-    groupB.sample = df.compare$`Unique Sample ID`[df.compare[comp] == 'B']
+    groupA.sample = df.compare$Samples[df.compare[comp] == 'A']
+    groupB.sample = df.compare$Samples[df.compare[comp] == 'B']
     
     df.miRNA.A = df.input.data.GlobalNorm[, c('miRNA', groupA.sample)]
     df.miRNA.B = df.input.data.GlobalNorm[, c('miRNA', groupB.sample)]
@@ -178,6 +178,9 @@ cols.DE = c("up" = col.others[1], "down" = col.others[2], "ns" = col.grey)
 fun.plot.dCt    = function(ls.diff, comp) {
     df.res.order = ls.diff$res.order
     fdr = ls.diff$fdr
+    pvaluetitle = ifelse(fdr, 
+                         paste0('FDR corrected p values < ', threshold.DE.pvalue),
+                         paste0('p values < ', threshold.DE.pvalue))
     
     if(fdr) {
         df.tmp = df.res.order %>%
@@ -207,7 +210,7 @@ fun.plot.dCt    = function(ls.diff, comp) {
             theme(axis.text.x =element_blank())+
             ylab("dCt Values") +
             geom_hline(yintercept = c(threshold.DE.dCt, -threshold.DE.dCt), linetype = 'dashed') +
-            ggtitle(paste0("Differentially expressed miRNA ( ", comp, " )")) 
+            ggtitle(paste0(comp, " , dCt cut-off = ", threshold.DE.dCt, ', ', pvaluetitle)) 
     } else {
         p.dCt = ggplot(df.tmp, 
                        aes(x = miRNA, y = dCt, fill = type)) +
@@ -218,7 +221,7 @@ fun.plot.dCt    = function(ls.diff, comp) {
             theme(axis.text.x = element_text(angle = 270, hjust = 1, vjust = 0.5))+
             ylab("dCt Values") +
             geom_hline(yintercept = c(threshold.DE.dCt, -threshold.DE.dCt), linetype = 'dashed') +
-            ggtitle(paste0("Differentially expressed miRNA ( ", comp, " )")) 
+            ggtitle(paste0(comp, " , dCt cut-off = ", threshold.DE.dCt, ', ', pvaluetitle)) 
     }
     return(p.dCt)    
 }
@@ -226,6 +229,7 @@ fun.plot.dCt    = function(ls.diff, comp) {
 ## Scatter plot: Filter based on dCt
 fun.plot.scatter = function (ls.diff, comp) {
     df.order = ls.diff$res.order
+    
     df.tmp = df.order %>% 
         dplyr::mutate(type = case_when(dCt >= threshold.DE.dCt  ~ 'up',
                                        dCt <= -threshold.DE.dCt ~ 'down',
@@ -253,6 +257,9 @@ fun.plot.scatter = function (ls.diff, comp) {
 fun.plot.volcano = function(ls.diff, comp) {
     df.res.order = ls.diff$res.order
     fdr          = ls.diff$fdr
+    pvaluetitle  = ifelse(fdr, 
+                         paste0('FDR corrected p values < ', threshold.DE.pvalue),
+                         paste0('p values < ', threshold.DE.pvalue))
     if(fdr) {
         df.tmp = df.res.order%>% 
             dplyr::mutate(type = case_when(dCt >= threshold.DE.dCt & adj.pvalue < threshold.DE.pvalue ~ 'sig.up',
@@ -275,7 +282,7 @@ fun.plot.volcano = function(ls.diff, comp) {
         geom_vline(xintercept = c(-threshold.DE.dCt, threshold.DE.dCt), linetype = "dashed") +
         labs(x = "dCt value", 
              y = "- Log10 (p value)",
-             title = comp) +
+             title = paste0(comp, " , dCt cut-off = ", threshold.DE.dCt, ', ', pvaluetitle)) +
         theme_classic() +
         theme(legend.position = "top")
     return(p.volcano)
@@ -313,3 +320,4 @@ fun.plot.volcano = function(ls.diff, comp) {
 #     rbind(data.frame(sd = filter.2, group = 'limma'))
 # ggplot(df.sd, aes(x = group, y = sd, fill = group))+
 #     geom_boxplot()
+

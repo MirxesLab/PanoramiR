@@ -75,7 +75,7 @@ fun.plot.violin = function(comp, cols) {
         theme(axis.text.x = element_text(angle = 270, hjust = 1, vjust = 0.5)) +
         scale_fill_manual(values = alpha(cols, 0.5)) +
         ylab("Ct Values") +
-        xlab("sample (unique ID)")
+        xlab("sample")
         ggtitle(paste0("miRNA Expression Level ( ", comp, " )"))
 
     fig.violin = df.tmp.melt %>%
@@ -91,7 +91,7 @@ fun.plot.violin = function(comp, cols) {
         layout(title = list(text = paste('miRNA expression level in each sample (',
                                          comp,
                                          ')')),
-               xaxis = list(title = 'sample (unique ID)', tickangle = 90),
+               xaxis = list(title = 'sample', tickangle = 90),
                yaxis = list(title = 'Ct Values', zeroline = F))
     ls.violin$ggplot = p.violin
     ls.violin$plotly = fig.violin

@@ -34,7 +34,7 @@ fun.readRes = function(i) {
     no.sample = df.sampleID$Samples[i]
     id.sample = df.sampleID$SampleID[i]
     pat       = paste0(id.sample, '_')
-    file      = grep(pat, list.files(dir.input, all.files = FALSE), value = TRUE)
+    file      = grep(pat, list.files(dir.input, all.files = FALSE, pattern = '.xlsx'), value = TRUE)
     
     # Read in raw data
     if (length(file) != 0 ){
@@ -42,7 +42,7 @@ fun.readRes = function(i) {
                              'Results', 
                              skip = result.skip)
         res.ext = res.ori[, c('Well Position', 'CT')]
-        colnames(res.ext) = c('Position', id.sample)
+        colnames(res.ext) = c('Position', no.sample)
         str_sub(res.ext$Position[which(str_length(res.ext$Position) == 2)], 
                 2, 
                 1) = 0 # A1 -> A01

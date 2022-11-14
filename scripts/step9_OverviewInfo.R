@@ -100,9 +100,9 @@ rownames(allmiRNA) = df.input.data.GlobalNorm$miRNA
 
 
 # Prepare annotation data frame for heatmap
-df.anno.all = df.samplesheet[, c('Unique Sample ID', comparisons[comparisons != "Comparison 0"])]
-df.anno.all = df.anno.all[df.anno.all$`Unique Sample ID` %in% colnames(df.input.data.GlobalNorm)[-1], ] %>%
-    tibble::column_to_rownames('Unique Sample ID')
+df.anno.all = df.samplesheet[, c('Samples', comparisons[comparisons != "Comparison 0"])]
+df.anno.all = df.anno.all[df.anno.all$Samples %in% colnames(df.input.data.GlobalNorm)[-1], ] %>%
+    tibble::column_to_rownames('Samples')
 
 
 # Prepare annotation color for heatmap

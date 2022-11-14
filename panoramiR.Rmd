@@ -306,7 +306,7 @@ source('scripts/step10_DEanalysis.R')
 ```
 
 ## Differentially expressed miRNA {.tabset .tabset-pills}
-The top 20 miRNAs having the smallest p value between the sample groups are listed in the table below. dCt of each miRNA is expressed as the mean Ct value of that in Group B minus the mean Ct value of that in Group A. Statistical significance for each dCt is expressed as FDR corrected p-values.
+The top 20 miRNAs having the smallest p value between the sample groups are listed in the table below. dCt of each miRNA is expressed as the mean Ct value of that in Group B minus the mean Ct value of that in Group A. Statistical significance for each dCt is expressed as FDR corrected p-values. For a list of all differentially expressed miRNAs, please refer to the `DE_analysis_n.csv` for details (where n is the comparison number).
 
 ### `r if('Comparison 1' %in% comparisons) {comparisons[1]}` {.unnumbered}
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
@@ -347,11 +347,29 @@ if("Comparison 3" %in% comparisons) {
         row_spec(0, background=rep(col.others[2], ncol(ls.diff.3$res.order)),
                  extra_css = 'border: 0px;') %>%
         scroll_box(width = '100%', height = '250px')
+        
 }
 ```
 
+```{r results='hide'}
+
+if("Comparison 1" %in% comparisons) {
+    write.csv(ls.diff.1$res.filter, file.path(dir.out.tbl, 'DE_analysis_1.csv'))
+}
+
+if("Comparison 2" %in% comparisons) {
+    write.csv(ls.diff.2$res.filter, file.path(dir.out.tbl, 'DE_analysis_2.csv'))
+}
+
+if("Comparison 3" %in% comparisons) {
+    write.csv(ls.diff.3$res.filter, file.path(dir.out.tbl, 'DE_analysis_3.csv'))
+}
+
+```
+
+
 ## Scatter Plot {.tabset .tabset-pills}
-Figures below show the dCt value between treatment and control group. The red points represent miRNA whose dCt greater than or equal to 1, and the blue points represent miRNA whose dCt less than or equal to 1. \
+Figures below show the dCt value between treatment and control group. The red points represent miRNA whose dCt greater than or equal to `r threshold.DE.dCt`, and the blue points represent miRNA whose dCt less than or equal to - `r threshold.DE.dCt`. \
 
 ### `r if('Comparison 1' %in% comparisons) {comparisons[1]}` {.unnumbered}
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.cap="Scatter Plot for Comparison 1", fig.align='center'}
@@ -392,7 +410,7 @@ if ("Comparison 3" %in% comparisons) {
 ```
 
 ## Waterfall plot {.tabset .tabset-pills}
-The waterfall plot displays statistically significant (p < `r threshold.DE.pvalue`) dCt values between the treatment and control groups. The red bars represent miRNA whose dCt greater than or equal to `r threshold.DE.dCt`, and the blue bars represent miRNA whose dCt less than or equal to `r threshold.DE.dCt`.
+The waterfall plot displays statistically significant (p < `r threshold.DE.pvalue`) dCt values between the treatment and control groups. The red bars represent miRNA whose dCt greater than or equal to `r threshold.DE.dCt`, and the blue bars represent miRNA whose dCt less than or equal to - `r threshold.DE.dCt`.
 
 ### `r if('Comparison 1' %in% comparisons) {comparisons[1]}` {.unnumbered}
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.cap='Bar plot for Comparison 1', fig.align='center'}
@@ -433,7 +451,7 @@ if ("Comparison 3" %in% comparisons) {
 ```
 
 ## Volcano Plot {.tabset .tabset-pills}
-The relative expression of each miRNA is summarised in the volcano plot shown below. ‘Sig. up’ refers to the miRNAs showing a relative expression of more than 1 dCt and a p-value of less than 0.05. ‘Sig. down’ refers to the miRNAs showing a relative expression of less than 1 dCt and a p-value of less than 0.05.
+The relative expression of each miRNA is summarised in the volcano plot shown below. ‘Sig. up’ refers to the miRNAs showing a relative expression of more than `r threshold.DE.dCt` dCt and a p-value of less than `r threshold.DE.pvalue`. ‘Sig. down’ refers to the miRNAs showing a relative expression of less than - `r threshold.DE.dCt` dCt and a p-value of less than `r threshold.DE.pvalue`.
 
 ### `r if('Comparison 1' %in% comparisons) {comparisons[1]}` {.unnumbered}
 ```{r echo=FALSE, message=FALSE, warning=FALSE, fig.cap='Volcano plot for Comparison 1', fig.align='center'}
@@ -499,7 +517,7 @@ source('scripts/step11_targetgene.R')
 ```
 
 ## Predicted Genes Targeted by Selected miRNA {.tabset .tabset-pills}
-miRNAs found differentially expressed between the sample groups (fold change \>= `r threshold.DE.dCt` and p-value =\< `r threshold.DE.pvalue`) are subjected to predicted gene target analysis using miRTarBase [@RN1]. A subset of the predicted gene targets is shown below. For a list of all predicted genes targeted by the differentially expressed miRNAs, please refer to the `target_gene_n.csv` file (where n is the comparison number).
+miRNAs found differentially expressed between the sample groups (abs(dCt) \>= `r threshold.DE.dCt` and p-value =\< `r threshold.DE.pvalue`) are subjected to predicted gene target analysis using miRTarBase [@RN1]. A subset of the predicted gene targets is shown below. For a list of all predicted genes targeted by the differentially expressed miRNAs, please refer to the `target_gene_n.csv` file (where n is the comparison number).
 
 ### `r if('Comparison 1' %in% comparisons) {comparisons[1]}` {.unnumbered}
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
