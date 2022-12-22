@@ -32,51 +32,53 @@ fun.targetGene = function(ls.diff) {
             dplyr::inner_join(df.res.filter, by = 'miRNA') %>%
             dplyr::select(miRNA, GeneSymbol, GeneID, EnsemblID) %>%
             unique()
+        
+        if (nrow(miRNA2gene.sig) == 0) {
+            ls.miRNA2gene = NA             # No target gene is found, length(ls.miRNA2gene) = 1
+        } else {
+            # generate gene list for go analysis
+            # the artificial pvalue of gene targeted by selected miRNA is 0.001
+            # the artificial pvalue of other genes is 1
+            miRNA2gene.all = miRNA2gene.all %>%
+                dplyr::mutate(art.pvalue = ifelse(miRNA2gene.all$GeneSymbol %in% miRNA2gene.sig$GeneSymbol,
+                                                  0.001,
+                                                  1))
+            
+            # Gene Symbol with artificial p value for GO analysis
+            symbol.pvalue = data.frame(symbol = miRNA2gene.all$GeneSymbol,
+                                       art.pvalue = miRNA2gene.all$art.pvalue) %>%
+                unique()
+            
+            # Generate data frame for target gene analysis
+            miRNA.select = unique(miRNA2gene.sig$miRNA)
+            df.miRNA2gene.show = data.frame() 
+            for (i in miRNA.select) {
+                # Selected 5 target genes randomly
+                tmp   = miRNA2gene.sig[miRNA2gene.sig$miRNA == i, ]
+                if(nrow(tmp < 5)) {
+                    df.miRNA2gene.show = rbind(df.miRNA2gene.show,
+                                               tmp)
+                } else {
+                    index = sample(which(miRNA2gene.sig$miRNA == i),
+                                   size = 5)
+                    df.miRNA2gene.show = rbind(df.miRNA2gene.show,
+                                               miRNA2gene.sig[index, ])
+                }
+            }
+            rownames(df.miRNA2gene.show) = NULL
+            
+            # if (nrow(df.miRNA2gene.show) <= 15) {
+            #     df.miRNA2gene.show = df.miRNA2gene.show
+            # } else {
+            #     df.miRNA2gene.show = df.miRNA2gene.show[1:15, ]
+            # }
+            
+            ls.miRNA2gene$miRNA2gene.sig = miRNA2gene.sig # Save
+            ls.miRNA2gene$symbol.pvalue  = symbol.pvalue  # For GO enrichment
+            ls.miRNA2gene$miRNA2gene.show = df.miRNA2gene.show # For Report
+        }
     }
     
-    if (nrow(miRNA2gene.sig) == 0) {
-        ls.miRNA2gene = NA             # No target gene is found, length(ls.miRNA2gene) = 1
-    } else {
-        # generate gene list for go analysis
-        # the artificial pvalue of gene targeted by selected miRNA is 0.001
-        # the artificial pvalue of other genes is 1
-        miRNA2gene.all = miRNA2gene.all %>%
-            dplyr::mutate(art.pvalue = ifelse(miRNA2gene.all$GeneSymbol %in% miRNA2gene.sig$GeneSymbol,
-                                              0.001,
-                                              1))
-        
-        # Gene Symbol with artificial p value for GO analysis
-        symbol.pvalue = data.frame(symbol = miRNA2gene.all$GeneSymbol,
-                                   art.pvalue = miRNA2gene.all$art.pvalue) %>%
-            unique()
-        
-        # Generate data frame for target gene analysis
-        miRNA.select = unique(miRNA2gene.sig$miRNA)
-        df.miRNA2gene.show = data.frame() 
-        for (i in miRNA.select) {
-            # Selected 5 target genes randomly
-            tmp   = miRNA2gene.sig[miRNA2gene.sig$miRNA == i, ]
-            if(nrow(tmp < 5)) {
-                df.miRNA2gene.show = rbind(df.miRNA2gene.show,
-                                           tmp)
-            } else {
-                index = sample(which(miRNA2gene.sig$miRNA == i),
-                               size = 5)
-                df.miRNA2gene.show = rbind(df.miRNA2gene.show,
-                                           miRNA2gene.sig[index, ])
-            }
-        }
-        rownames(df.miRNA2gene.show) = NULL
-        
-        # if (nrow(df.miRNA2gene.show) <= 15) {
-        #     df.miRNA2gene.show = df.miRNA2gene.show
-        # } else {
-        #     df.miRNA2gene.show = df.miRNA2gene.show[1:15, ]
-        # }
-        
-        ls.miRNA2gene$miRNA2gene.sig = miRNA2gene.sig # Save
-        ls.miRNA2gene$symbol.pvalue  = symbol.pvalue  # For GO enrichment
-        ls.miRNA2gene$miRNA2gene.show = df.miRNA2gene.show # For Report
-    }
+
     return(ls.miRNA2gene)
 }

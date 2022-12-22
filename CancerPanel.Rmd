@@ -12,6 +12,8 @@ output:
 bibliography: resources/bibliography.bibtex
 css: resources/mirxes_theme.css
 csl: resources/3d-printing-in-medicine.csl
+params:
+    config: 'scripts/config_change.R'
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
@@ -23,7 +25,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ```{r}
 # Preparation
-source('scripts/config_change.R')
+source(params$config)
 source('scripts/config.R')           
 source('scripts/step1_ReadInSamplesheet.R')
 source('scripts/step2_ReadInRawData.R') 
@@ -90,7 +92,7 @@ knitr::include_graphics(png.workflow)
 # Pre-processing of Data
 
 ## Verification of Inter Plate Control (IPC)
-IPCs are DNA template that is run 4 times for each cDNA pool. First check the standard deviation of Cts of IPCs for each cDNA pool; Standard deviation greater than 0.5 indicates pipetting error, and caution should be taken when interpreting results. IPC can be used as positive controls for qPCR process. **If IPC has Ct value greater than 25, it indicates qPCR reaction has failed**, and corresponding samples are removed (Please refer to the `IPC_Check_Summary.csv` for details). Secondly, IPC can be used to normalize plate to plate variation. Due to machine variations, Ct values from different machines are not directly comparable. Use IPCs to normalize the machine to machine variation as IPCs will have the same Ct value across machines if the machine variation is eliminated.
+IPCs are DNA template that is run 4 times for each cDNA pool. First check the standard deviation of Cts of IPCs for each cDNA pool; Standard deviation greater than 0.5 indicates pipetting error, and caution should be taken when interpreting results. IPC can be used as positive controls for qPCR process. **If IPC has Ct value greater than `r threshold.ipc`, it indicates qPCR reaction has failed**, and corresponding samples are removed (Please refer to the `IPC_Check_Summary.csv` for details). Secondly, IPC can be used to normalize plate to plate variation. Due to machine variations, Ct values from different machines are not directly comparable. Use IPCs to normalize the machine to machine variation as IPCs will have the same Ct value across machines if the machine variation is eliminated.
 ```{r}
 source('scripts/step3_verificationIPC.R')
 if(stop) {
@@ -110,7 +112,7 @@ miRNA spike-ins are uniquely designed small RNAs (~22 nt ) with sequences distin
 The miRNA spike-ins can be used in two modes: \
 1. As RNA isolation control. miRNA spike-ins are added to sample lysis buffer or RNA isolation buffer before mixing with biological sample. A difference in the measured levels of miRNA spike-ins indicates varying RNA isolation yield and/or RNA purity. When used in RNA isolation, the RNA input volume to RT should be taken into consideration before spike-in Cts are used to calculate a normalization factor.
 
-2.As reverse transcription control. miRNA spike-ins are added to RT master mix. Measured levels of miRNA spike ins allow normalization between RT reactions to detect inconsistencies between samples e.g. presence of RT-qPCR inhibitors in some samples. **If RT spike-in has Ct value greater than 30, it indicates RT reaction has failed**, and corresponding samples are removed (Please refer to the `SP_Check_Summary.csv` for details).
+2.As reverse transcription control. miRNA spike-ins are added to RT master mix. Measured levels of miRNA spike ins allow normalization between RT reactions to detect inconsistencies between samples e.g. presence of RT-qPCR inhibitors in some samples. **If RT spike-in has Ct value greater than `r threshold.sp`, it indicates RT reaction has failed**, and corresponding samples are removed (Please refer to the `SP_Check_Summary.csv` for details).
 
 The Ct values of targeted miRNA are first normalized by miRNA spike-ins. Each sample has 4 miRNA spike-ins Ct corresponding to each RT group (A, B, C, and D). For each RT group in one sample, four Spike-in Ct values of that group is used to calculate a spike-in factor which is added to Ct values of corresponding miRNAs in the sample. For the specific calculation method, please refer to the formula below.
 
@@ -378,6 +380,21 @@ if("Comparison 3" %in% comparisons) {
 }
 ```
 
+```{r results='hide'}
+
+if("Comparison 1" %in% comparisons) {
+    write.csv(ls.diff.1$res.filter, file.path(dir.out.tbl, 'DE_analysis_1.csv'))
+}
+
+if("Comparison 2" %in% comparisons) {
+    write.csv(ls.diff.2$res.filter, file.path(dir.out.tbl, 'DE_analysis_2.csv'))
+}
+
+if("Comparison 3" %in% comparisons) {
+    write.csv(ls.diff.3$res.filter, file.path(dir.out.tbl, 'DE_analysis_3.csv'))
+}
+
+```
 
 ## Scatter Plot {.tabset .tabset-pills}
 Figures below show the dCt value between treatment and control group. The red points represent miRNA whose dCt greater than or equal to 1, and the blue points represent miRNA whose dCt less than or equal to 1. \

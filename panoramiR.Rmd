@@ -12,6 +12,8 @@ output:
 bibliography: resources/bibliography.bibtex
 css: resources/mirxes_theme.css
 csl: resources/3d-printing-in-medicine.csl
+params:
+    config: 'scripts/config_change.R'
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
@@ -22,7 +24,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ```{r echo = FALSE, warning= FALSE, message = FALSE}
 # Preparation
-source('scripts/config_change.R')
+source(params$config)
 source('scripts/config.R')
 source('scripts/step1_ReadInSamplesheet.R') # Read in Sample sheet
 source('scripts/step2_ReadInRawData.R')

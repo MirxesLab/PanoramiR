@@ -88,7 +88,7 @@ if(length(failure.ipc) == num.sample) {
     for (i in comp.tmp) {
         if (i %in% comparisons) {
             comp = ls.compare.group[[i]]
-            tmp  = comp[comp$Samples != failure.ipc, ]
+            tmp  = comp[-failure.ipc, ]
             num.A = sum(tmp[[i]] == 'A')
             num.B = sum(tmp[[i]] == 'B')
             if (num.A < 2) { 

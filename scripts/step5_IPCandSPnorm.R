@@ -90,7 +90,7 @@ if(arg.pipeline != 'PanoramiR') {
     
     # Save Results
     tmp = as.data.frame(df.input.data.IPC.norm)
-    colnames(tmp)[-c(1,2)] = paste('sample', colnames(tmp)[-c(1,2)])
+    # colnames(tmp)[-c(1,2)] = paste('sample', colnames(tmp)[-c(1,2)])
     
     write.csv(tmp, file.path(dir.out.tbl, 'Data IPCnorm.csv'))
     

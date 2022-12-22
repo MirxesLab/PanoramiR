@@ -81,12 +81,11 @@ if(!is.basic) {
 sd.ipc         = 0.5         # Standard deviation greater than 0.5 indicates pipetting error and caution should be taken when interpreting results
 diff.sp        = 0.5         # only when is.RTsp = TRUE. larger difference is usually a sign of pipetting error.
 
-result.skip    = 46          # The number depends on the machine
 cutoff.max     = 33          # The first round filter, before normalization
 cutoff.min     = 9           # Can be changed based on customer' requirement
 cutoff.sp      = 32          # The second round filter, for spike-in normalization
 
-threshold.ipc  = 25          # If IPC has Ct values greater than 25, it indicates qPCR reaction has failed. -> remove those samples
+threshold.ipc  = 30          # If IPC has Ct values greater than 25, it indicates qPCR reaction has failed. -> remove those samples
 threshold.sp   = 30          # all Spike-Ins from all samples have Ct value lower than this value -> remove those samples
 
 threshold.impute    = 0.1    # No more than 10% missing value in miRNA

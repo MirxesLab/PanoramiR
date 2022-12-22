@@ -89,7 +89,7 @@ fun.DEanalysis.Ttest = function(comp) {
     
     df.res.order = df.res.ori[order(df.res.ori$adj.pvalue, df.res.ori$pvalue, decreasing = FALSE), ] 
     rownames(df.res.order) = NULL
-    
+
     # Filter based on p value and dCt
     df.res.filter = df.res.order %>%
         dplyr::filter(adj.pvalue <= threshold.DE.pvalue & abs(dCt) >= threshold.DE.dCt)
@@ -99,10 +99,16 @@ fun.DEanalysis.Ttest = function(comp) {
         df.res.filter = df.res.order %>%
             dplyr::filter(pvalue <= threshold.DE.pvalue & abs(dCt) >= threshold.DE.dCt)
         fdr = FALSE
+        if(nrow(df.res.filter) == 0) {
+            df.res.filter = data.frame()
+        } else {
+            rownames(df.res.filter) = NULL
+        }
+    } else {
+        rownames(df.res.filter) = NULL
     }
-    rownames(df.res.filter) = NULL
     
-    
+
     ls.diff$groupA     = df.miRNA.A
     ls.diff$groupB     = df.miRNA.B
     ls.diff$res.order  = df.res.order

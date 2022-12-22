@@ -12,6 +12,8 @@ output:
 bibliography: resources/bibliography.bibtex
 css: resources/mirxes_theme.css
 csl: resources/3d-printing-in-medicine.csl
+params:
+    config: 'scripts/config_change.R'
 ---
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE,
@@ -23,7 +25,7 @@ knitr::opts_chunk$set(echo = FALSE,
 
 ```{r}
 # Preparation
-source('scripts/config_change.R')
+source(params$config)
 source('scripts/config.R')           
 source('scripts/step1_ReadInSamplesheet.R')
 source('scripts/step2_ReadInRawData.R') 
@@ -499,26 +501,6 @@ if ("Comparison 3" %in% comparisons) {
 }
 ```
 
-
-```{r}
-# comp.tmp = comparisons[comparisons != 'Comparison 0']
-# num.filter = 0
-# for (i in comp.tmp) {
-#     ls.diff = fun.DEanalysis.Ttest(i)
-#     df.filter = ls.diff$res.filter
-#     if (nrow(df.filter) == 0) {
-#         num.filter = num.filter
-#     } else {
-#         num.filter = num.filter + 1
-#     }
-# }
-# if (num.filter == 0) {
-#     description = 'Sorry, did not find any differentially expressed in any defined comparisons'
-#     knitr::knit_exit()
-# } else {description = ''}
-```
-<!-- `r description` -->
-
 # Predicted Gene Target Analysis
 ```{r}
 source('scripts/step11_targetgene.R')
@@ -531,6 +513,7 @@ miRNAs found differentially expressed between the sample groups (fold change \>=
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
 if('Comparison 1' %in% comparisons) {
     ls.miRNA2gene.1 = fun.targetGene(ls.diff.1)
+    
     if(length(ls.miRNA2gene.1) == 1) {
         description = "Sorry, target genes cannot be found by selected miRNA"
     } else {
