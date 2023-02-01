@@ -48,9 +48,20 @@ fun.df.factor = function(df) {
     # calculate factors based on RT group
     fun.factor = function(df.x) {
         # df.x is the sub data frame of df 
-        mean.sample = apply(df.x[, -c(1,2)], 2, mean, na.rm = TRUE)
-        mean.all    = mean(mean.sample)
-        factor  = mean.sample - mean.all
+        # special situationL when both IPC1 or IPC2 is NA
+        mean.IPC1 = apply(df.x[1:2, -c(1,2)], 2, mean)
+        mean.IPC2 = apply(df.x[3:4, -c(1,2)], 2, mean)
+        
+        mean.IPC1.all = mean(mean.IPC1, na.rm = TRUE)
+        mean.IPC2.all = mean(mean.IPC2, na.rm = TRUE)
+        
+        mean.IPC1 = ifelse(is.na(mean.IPC1), mean.IPC1.all, mean.IPC1)
+        mean.IPC2 = ifelse(is.na(mean.IPC2), mean.IPC2.all, mean.IPC2)
+        
+        df.tmp = data.frame(factorIPC1 = mean.IPC1 - mean.IPC1.all,
+                            factorIPC2 = mean.IPC2 - mean.IPC2.all)
+        
+        factor = apply(df.tmp, 1, mean)
         return(factor)
     }
     
