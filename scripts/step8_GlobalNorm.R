@@ -73,16 +73,21 @@ fun.plot.violin = function(comp, cols) {
     # Violin Plot
     p.violin = ggplot(df.tmp.melt,
                       aes(x = sample, y = Ct, fill = group)) +
-        geom_violin(trim = F) +
         geom_boxplot(width = 0.1) +
         #geom_jitter(shape = 16, position = position_jitter(0.2), color = NA) +
         theme_classic() +
         theme(axis.text.x = element_text(angle = 270, hjust = 1, vjust = 0.5)) +
         scale_fill_manual(values = alpha(cols, 0.5)) +
         ylab("Ct Values") +
-        xlab("sample")
+        xlab("sample") +
         ggtitle(paste0("miRNA Expression Level ( ", comp, " )"))
-
+    if(nrow(df.tmp) > 25) {
+      p.violin = p.violin + geom_violin(trim = F, color = NA)
+    } else {
+      p.violin = p.violin + geom_violin(trim = F)
+    }
+  
+    
     fig.violin = df.tmp.melt %>%
         plot_ly(x = ~ sample,
                 y = ~ Ct,

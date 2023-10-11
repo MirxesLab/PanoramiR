@@ -36,9 +36,16 @@ p.num.miRNA = ggplot(data = df.detect,
     geom_bar(stat = 'identity', position = 'stack') +
     scale_fill_manual(values = c(col.grey, col.others[2])) +
     theme_classic() +
-    theme(axis.text.x = element_text(angle = 270, vjust = 0.5, hjust = 1)) +
     ggtitle('The number of miRNA detected') +
     labs(y = 'Number of miRNA', x = 'sample')
+
+if (ncol(df.input.data.Filt2) - 1 > 50) {
+  p.num.miRNA = p.num.miRNA + theme(axis.text.x = element_blank())
+} else {
+  p.num.miRNA = p.num.miRNA + theme(axis.text.x = element_text(angle = 270, vjust = 0.5, hjust = 1))
+}
+    
+
 
 
                     # --------------------------------- #

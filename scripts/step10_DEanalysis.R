@@ -95,18 +95,20 @@ fun.DEanalysis.Ttest = function(comp) {
         dplyr::filter(adj.pvalue <= threshold.DE.pvalue & abs(dCt) >= threshold.DE.dCt)
     fdr = TRUE
     
-    if(nrow(df.res.filter) == 0) {
-        df.res.filter = df.res.order %>%
-            dplyr::filter(pvalue <= threshold.DE.pvalue & abs(dCt) >= threshold.DE.dCt)
-        fdr = FALSE
-        if(nrow(df.res.filter) == 0) {
-            df.res.filter = data.frame()
-        } else {
-            rownames(df.res.filter) = NULL
-        }
-    } else {
-        rownames(df.res.filter) = NULL
-    }
+  
+    
+    # if(nrow(df.res.filter) == 0) {
+    #     df.res.filter = df.res.order %>%
+    #         dplyr::filter(pvalue <= threshold.DE.pvalue & abs(dCt) >= threshold.DE.dCt)
+    #     fdr = FALSE
+    #     if(nrow(df.res.filter) == 0) {
+    #         df.res.filter = data.frame()
+    #     } else {
+    #         rownames(df.res.filter) = NULL
+    #     }
+    # } else {
+    #     rownames(df.res.filter) = NULL
+    # }
     
 
     ls.diff$groupA     = df.miRNA.A
@@ -278,9 +280,9 @@ fun.plot.volcano = function(ls.diff, comp) {
                                            TRUE ~ 'ns'))
     }
     
-    
+    if(fdr) {pvalue.type = "adj.pvalue"} else {pvalue.type = 'pvalue'}
     p.volcano = ggplot(df.tmp,
-                       aes(x = dCt, y = -log10(pvalue), col = type, label = miRNA)) +
+                       aes(x = dCt, y = -log10(get(pvalue.type)), col = type, label = miRNA)) +
         geom_point(size = 3) +
         scale_color_manual(values = cols.sig.DE,
                            breaks = c("sig.up", "sig.down", "ns")) +

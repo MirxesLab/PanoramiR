@@ -104,6 +104,13 @@ if(stop) {
 
 ```{r}
 source('scripts/step4_Round1Filter.R')
+
+if (is.RTsp) {
+  description = " (Please refer to the `SP_Check_Summary.xlsx` for details)"
+} else {
+  description = ""
+}
+
 ```
 
 
@@ -113,7 +120,7 @@ miRNA spike-ins are uniquely designed small RNAs (~22 nt ) with sequences distin
 The miRNA spike-ins can be used in two modes: \
 1. As RNA isolation control. miRNA spike-ins are added to sample lysis buffer or RNA isolation buffer before mixing with biological sample. A difference in the measured levels of miRNA spike-ins indicates varying RNA isolation yield and/or RNA purity. When used in RNA isolation, the RNA input volume to RT should be taken into consideration before spike-in Cts are used to calculate a normalization factor.
 
-2.As reverse transcription control. miRNA spike-ins are added to RT master mix. Measured levels of miRNA spike ins allow normalization between RT reactions to detect inconsistencies between samples e.g. presence of RT-qPCR inhibitors in some samples. **If RT spike-in has Ct value greater than 30, it indicates RT reaction has failed**, and corresponding samples are removed (Please refer to the `SP_Check_Summary.csv` for details).
+2.As reverse transcription control. miRNA spike-ins are added to RT master mix. Measured levels of miRNA spike ins allow normalization between RT reactions to detect inconsistencies between samples e.g. presence of RT-qPCR inhibitors in some samples. **If RT spike-in has Ct value greater than 30, it indicates RT reaction has failed**, and corresponding samples are removed`r description`.
 
 The Ct values of targeted miRNA are first normalized by miRNA spike-ins. Each sample has 4 miRNA spike-ins Ct corresponding to each RT group (A, B, C, and D). For each RT group in one sample, four Spike-in Ct values of that group is used to calculate a spike-in factor which is added to Ct values of corresponding miRNAs in the sample. For the specific calculation method, please refer to the formula below.
 
@@ -260,7 +267,7 @@ Principal component analysis is performed on the normalized miRNA expression dat
 if('Comparison 1' %in% comparisons) {
   p.pca.1 = fun.pca('Comparison 1', col.compare.1)
   ggplotly(p.pca.1)
-}
+} 
 ```
 
 ### `r if('Comparison 2' %in% comparisons) {comparisons[2]}` {.unnumbered}
@@ -300,11 +307,25 @@ Hierarchical clustering is performed on the normalized miRNA expression data to 
 
 ### miRNA {.unnumbered}
 ```{r fig.align='center', fig.cap='Clustergram analysis (row-wise scaling)'}
-p.heatmap.all = fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all)
+fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all)
 ```
 
 ### Sample-sample distance {.unnumbered}
 ```{r fig.align='center', fig.cap='Sample-to-sample distance'}
+pheatmap(sample.dist.matrix,
+                         clustering_distance_row = sample.dist,
+                         clustering_distance_col = sample.dist,
+                         col = colors.heatmap,
+                         annotation_colors = color.anno.all,
+                         annotation_col = df.anno.all,
+                         annotation_names_col = FALSE,
+                         show_rownames = ifelse(nrow(sample.dist.matrix) > 20, FALSE, TRUE),
+                         show_colnames = ifelse(nrow(sample.dist.matrix) > 20, FALSE, TRUE),
+                         main = "Euclidean distance of samples")
+```
+
+```{r results='hide'}
+p.heatmap.all = fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all)
 p.heatmap.s2s = pheatmap(sample.dist.matrix,
                          clustering_distance_row = sample.dist,
                          clustering_distance_col = sample.dist,
@@ -312,12 +333,12 @@ p.heatmap.s2s = pheatmap(sample.dist.matrix,
                          annotation_colors = color.anno.all,
                          annotation_col = df.anno.all,
                          annotation_names_col = FALSE,
+                         show_rownames = ifelse(nrow(sample.dist.matrix) > 20, FALSE, TRUE),
+                         show_colnames = ifelse(nrow(sample.dist.matrix) > 20, FALSE, TRUE),
                          main = "Euclidean distance of samples")
-```
 
-```{r results='hide'}
 png(file.path(dir.out.fig, 'Heatmap_All.png'), width = 1000, height = 800, res = 150)
-    p.heatmap.all
+   p.heatmap.all
 dev.off()
 
 png(file.path(dir.out.fig, 'Heatmap_s2s.png'), width = 1000, height = 800, res = 150)
@@ -332,7 +353,7 @@ source('scripts/step10_DEanalysis.R')
 ```
 
 ## Differentially expressed miRNA {.tabset .tabset-pills}
-The top 20 miRNAs having the smallest p value between the sample groups are listed in the table below. dCt of each miRNA is expressed as the mean Ct value of that in Group B minus the mean Ct value of that in Group A. Statistical significance for each dCt is expressed as FDR corrected p-values.
+The top 20 miRNAs having the smallest p value between the sample groups are listed in the table below. dCt of each miRNA is expressed as the mean Ct value of that in Group B minus the mean Ct value of that in Group A. Statistical significance for each dCt is expressed as FDR corrected p-values. For a list of all differentially expressed miRNAs, please refer to the `DE_analysis_sig_n.csv` for details (where n is the comparison number).
 
 ### `r if('Comparison 1' %in% comparisons) {comparisons[1]}` {.unnumbered}
 ```{r echo = FALSE, warning=FALSE, message=FALSE}
@@ -377,6 +398,24 @@ if("Comparison 3" %in% comparisons) {
 }
 ```
 
+```{r results='hide'}
+
+if("Comparison 1" %in% comparisons) {
+    write.csv(ls.diff.1$res.filter, file.path(dir.out.tbl, 'DE_analysis_sig_1.csv'))
+    write.csv(ls.diff.1$res.order,  file.path(dir.out.tbl, 'DE_analysis_ori_1.csv'))
+}
+
+if("Comparison 2" %in% comparisons) {
+    write.csv(ls.diff.2$res.filter, file.path(dir.out.tbl, 'DE_analysis_sig_2.csv'))
+    write.csv(ls.diff.2$res.order,  file.path(dir.out.tbl, 'DE_analysis_ori_2.csv'))
+}
+
+if("Comparison 3" %in% comparisons) {
+    write.csv(ls.diff.3$res.filter, file.path(dir.out.tbl, 'DE_analysis_sig_3.csv'))
+    write.csv(ls.diff.3$res.order,  file.path(dir.out.tbl, 'DE_analysis_ori_3.csv'))
+}
+
+```
 
 ## Scatter Plot {.tabset .tabset-pills}
 Figures below show the dCt value between treatment and control group. The red points represent miRNA whose dCt greater than or equal to 1, and the blue points represent miRNA whose dCt less than or equal to 1. \
@@ -407,15 +446,21 @@ if('Comparison 3' %in% comparisons) {
 
 ```{r results='hide'}
 if ("Comparison 1" %in% comparisons) {
+  if (nrow(ls.diff.1$res.filter) != 0) {
     fun.savefig(p.scatter.1, 'Scatter_Comp1.png')
+  }
 }
 
 if ("Comparison 2" %in% comparisons) {
+  if (nrow(ls.diff.2$res.filter) != 0) {
     fun.savefig(p.scatter.2, 'Scatter_Comp2.png')
+  }
 }
 
 if ("Comparison 3" %in% comparisons) {
+  if (nrow(ls.diff.3$res.filter) != 0) {
     fun.savefig(p.scatter.3, 'Scatter_Comp3.png')
+  }
 }
 ```
 
@@ -424,27 +469,43 @@ The waterfall plot displays statistically significant (p < `r threshold.DE.pvalu
 
 ### `r if('Comparison 1' %in% comparisons) {comparisons[1]}` {.unnumbered}
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.cap='Bar plot for Comparison 1', fig.align='center'}
-if('Comparison 1' %in% comparisons) {
-    p.bar.dCt.1 = fun.plot.dCt(ls.diff.1, 'Comparison 1')
-    ggplotly(p.bar.dCt.1)
-}
+if('Comparison 1' %in% comparisons ) {
+  if (nrow(ls.diff.1$res.filter) != 0) {
+      p.bar.dCt.1 = fun.plot.dCt(ls.diff.1, 'Comparison 1')
+      ggplotly(p.bar.dCt.1)
+  } else {
+    description = 'Waterfall plot is not applicable'
+  }
+} else {description = ""}
 ```
+`r description`
 
 ### `r if('Comparison 2' %in% comparisons) {comparisons[2]}` {.unnumbered}
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.cap='Bar plot for Comparison 2', fig.align='center'}
-if('Comparison 2' %in% comparisons) {
-    p.bar.dCt.2 = fun.plot.dCt(ls.diff.2, 'Comparison 2')
-    ggplotly(p.bar.dCt.2)
-}
+if('Comparison 2' %in% comparisons ) {
+  if (nrow(ls.diff.2$res.filter) != 0) {
+      p.bar.dCt.2 = fun.plot.dCt(ls.diff.2, 'Comparison 2')
+      ggplotly(p.bar.dCt.2)
+  } else {
+    description = 'Waterfall plot is not applicable'
+  }
+} else {description = ""}
 ```
+`r description`
 
 ### `r if('Comparison 3' %in% comparisons) {comparisons[3]}` {.unnumbered}
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.cap='Bar plot for Comparison 3', fig.align='center'}
-if('Comparison 3' %in% comparisons) {
-    p.bar.dCt.3 = fun.plot.dCt(ls.diff.3, 'Comparison 3')
-    ggplotly(p.bar.dCt.3)
-}
+if('Comparison 3' %in% comparisons ) {
+  if (nrow(ls.diff.3$res.filter) != 0) {
+      p.bar.dCt.1 = fun.plot.dCt(ls.diff.3, 'Comparison 3')
+      ggplotly(p.bar.dCt.3)
+  } else {
+    description = 'Waterfall plot is not applicable'
+  }
+} else {description = ""}
 ```
+`r description`
+
 
 ```{r results='hide'}
 if ("Comparison 1" %in% comparisons) {

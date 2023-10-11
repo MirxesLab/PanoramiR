@@ -58,7 +58,7 @@ fun.plot.summary = function(ls.diff, ls.miRNA2gene, ls.GOsum, comp) {
                                .sep = '\n'))
     } else {
         DEmiRNA = boxGrob(glue("{num} miRNAs have significant expression difference",
-                               'p < {pvalue}, abs(dCt) < {dCt}',
+                               'adj.p < {pvalue}, abs(dCt) >= {dCt}',
                                num = txtInt(num.DE.miRNA),
                                pvalue = threshold.DE.pvalue,
                                dCt = threshold.DE.dCt,
