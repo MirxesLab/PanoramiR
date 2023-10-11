@@ -90,7 +90,6 @@ threshold.sp   = 30          # all Spike-Ins from all samples have Ct value lowe
 
 threshold.impute    = 0.1    # No more than 10% missing value in miRNA
 threshold.DE.pvalue = 0.05   # The p value of T test
-threshold.DE.dCt    = 1      
 threshold.GO.pvalue = 0.01
 GO.nodesize         = 6
 

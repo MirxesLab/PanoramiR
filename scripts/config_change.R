@@ -9,3 +9,4 @@ skip.samplesheet = 0           # the sample information start from which line
 arg.pipeline     = 'Cancer'    # ['Cancer', 'Biofluid', 'PanoramiR']
 is.RTsp          = FALSE       # Whether the filter samples by spike-in Ct values
 is.basic         = T       # For basic tier, no report generated
+threshold.DE.dCt = 1
