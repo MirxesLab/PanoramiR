@@ -33,3 +33,27 @@ rmarkdown::render(input = cancer,
 1. Please ensure that all required R packages are installed. Note that some packages may not be listed in `installPackage.R`. Please let me know if you encounter any missing packages.
 2. Ensure you use absolute paths to guarantee the pipeline can locate all necessary files.
 3. The pipeline relies on the 5th column in the sample information sheet to read qPCR results. Please double-check for **typos** and confirm that the names in the 5th column are **uniquely matched with the names of qPCR results**.
+
+## Licenses of packages
+| package      | License            | Version | URL                                         |
+|--------------|--------------------|---------|---------------------------------------------|
+| BiocManager  | Artistic-2.0       | 1.30.22 | https://bioconductor.github.io/BiocManager/ |
+| rmarkdown    | GPL-3              | 2.25    | https://github.com/rstudio/rmarkdown        |
+| tidyverse    | MIT + file LICENSE | 2.0.0   | https://tidyverse.tidyverse.org             |
+| readxl       | MIT + file LICENSE | 1.4.3   | https://readxl.tidyverse.org                |
+| stringi      | file LICENSE       | 1.7.12  | https://stringi.gagolewski.com/             |
+| stringr      | MIT + file LICENSE | 1.5.0   | https://stringr.tidyverse.org               |
+| plotly       | MIT + file LICENSE | 4.10.2  | https://plotly-r.com                        |
+| Gmisc        | GPL (>= 3)         | 3.0.3   | https://gforge.se                           |
+| glue         | MIT + file LICENSE | 1.6.2   | https://github.com/tidyverse/glue           |
+| grid         | Part of R 4.3.2    | 4.3.2   | https://cran.r-project.org/web/packages/grid/index.html                                          |
+| knitr        | GPL                | 1.44    | https://yihui.org/knitr/                    |
+| kableExtra   | MIT + file LICENSE | 1.3.4   | http://haozhu233.github.io/kableExtra/      |
+| rmdformats   | GPL (>= 2)         | 1.0.4   | https://github.com/juba/rmdformats          |
+| reshape2     | MIT + file LICENSE | 1.4.4   | https://github.com/hadley/reshape           |
+| org.Hs.eg.db | Artistic-2.0       | 3.17.0  | https://bioconductor.org/packages/release/data/annotation/html/org.Hs.eg.db.html                                          |
+| topGO        | LGPL               | 2.52.0  | https://bioconductor.org/packages/release/bioc/html/topGO.html                                          |
+| IRanges      | Artistic-2.0       | 2.34.1  | https://github.com/Bioconductor/IRanges   |
+| pheatmap     | GPL-2              | 1.0.12  | https://cran.r-project.org/web/packages/pheatmap/index.html                                          |
+| RColorBrewer | Apache License 2.0 | 1.1-3   | https://cran.r-project.org/web/packages/RColorBrewer/index.html                                          |
+| cowplot      | GPL-2              | 1.1.1   | https://wilkelab.org/cowplot/               |
