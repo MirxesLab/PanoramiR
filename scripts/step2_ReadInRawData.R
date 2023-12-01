@@ -44,8 +44,10 @@ fun.readRes = function(i) {
     if (length(file) != 0 ){
         res.ori = read_excel(file.path(dir.input, file), 'Results')
         idx     = which(res.ori[, 1] == 'Well')
-        colnames(res.ori) = res.ori[idx, ]
-        res.ori = res.ori[-c(1:idx), ]
+        if(length(idx) != 0) {
+          colnames(res.ori) = res.ori[idx, ]
+          res.ori = res.ori[-c(1:idx), ]
+        }
         
         res.ext = res.ori[, c('Well Position', 'CT')]
         colnames(res.ext) = c('Position', no.sample)
