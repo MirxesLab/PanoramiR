@@ -17,6 +17,19 @@ The pipeline requires certain R packages. Please refer to `resources/installPack
 
 ## Prepare the configration files
 Modify the paths and parameters in `config_change.R` to customize the pipeline for different datasets and situations.
+```
+# ----- Path -----
+dir.input        = '/path/to/input/directory'    # absolute path
+dir.out          = '/output/results/path'        # absolute path
+file.samplesheet = '/input/samplesheet/file'     # absolute path
+
+# ----- Parameters -----
+skip.samplesheet = 0           # the sample information start from which lines
+arg.pipeline     = 'Cancer'    # ['Cancer', 'PanoramiR'] # 'Biofluid' haven't been tested by real data yet
+is.RTsp          = FALSE       # Whether filter samples by spike-in Ct values
+is.basic         = FALSE       # For basic tier, no report generated
+threshold.DE.dCt = 1
+```
 
 ## Run the pipeline `run_pipeline.R`
 1. Change the diretory to the ones where you stored the scripts. 
@@ -27,10 +40,21 @@ Modify the paths and parameters in `config_change.R` to customize the pipeline f
     3. `output_dir`: the directory where the report will be stored.
     4. `params`: the path of configration file prepared earlier.
 ```
-rmarkdown::render(input = cancer, 
+# load library before run pipeline
+library(rmarkdown)
+
+# process results of cancer panel
+rmarkdown::render(input = '/path/to/CancerPanel.Rmd', 
                   output_file = 'CancerPanel.html', 
                   output_dir = '/path/to/store/HTML',  # absolute path
                   params = list(config = '/path/to/config_change.R'))
+
+# process the results of panoramiR panel
+rmarkdown::render(input = "/path/to/panoramiR.Rmd", 
+                   output_file = 'panoramiR.html', 
+                   output_dir = '/path/to/store/HTML',  # absolute path
+                   params = list(config = '/path/to/config_change.R'))
+        
 ```
 ## Trouble shooting
 1. Please ensure that all required R packages are installed. Note that some packages may not be listed in `installPackage.R`. Please let me know if you encounter any missing packages.
