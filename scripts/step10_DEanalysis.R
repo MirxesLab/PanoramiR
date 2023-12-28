@@ -296,36 +296,3 @@ fun.plot.volcano = function(ls.diff, comp) {
     return(p.volcano)
 }
 
-
-# # check
-# ls.diff.1.ttest = fun.DEanalysis.Ttest('Comparison 1')
-# ls.diff.1.limma = fun.DEanalysis.limma('Comparison 1')
-# 
-# ls.diff.1.ttest$res.filter %>% write_xlsx('tmp/ttest.PanoramiR.xlsx')
-# ls.diff.1.limma$res.filter %>% write_xlsx('tmp/limma.PanoramiR.xlsx')
-# 
-# all.ttest = ls.diff.1.ttest$res.order
-# all.limma = ls.diff.1.limma$res.order
-# res.ttest = ls.diff.1.ttest$res.filter
-# res.limma = ls.diff.1.limma$res.filter
-# 
-# miRNA = df.input.data.GlobalNorm[df.input.data.GlobalNorm$miRNA %in% res.limma$miRNA, ]
-# 
-# # diff.ttest = all.ttest[all.ttest$miRNA %in% diff$miRNA, ]
-# # 
-# # 
-# # test.limma = all.limma[all.limma$miRNA %in% a, ] %>% write_xlsx('tmp/test.xlsx')
-# # 
-# # all.ttest[all.ttest$miRNA == 'hsa-miR-181c-3p', ]
-# # A = df.input.data.GlobalNorm[df.input.data.GlobalNorm$miRNA == 'hsa-miR-495-3p', c(2:4)] %>% as.numeric()
-# # B = df.input.data.GlobalNorm[df.input.data.GlobalNorm$miRNA == 'hsa-miR-495-3p', c(5:7)] %>% as.numeric()
-# # mean(A) - mean(B)
-# # 
-#  filter.1 = res.ttest$sd.A - res.ttest$sd.B
-#  filter.2 = res.limma$sd.A - res.limma$sd.B
-# 
-# df.sd = data.frame(sd = filter.1, group = 't-test') %>%
-#     rbind(data.frame(sd = filter.2, group = 'limma'))
-# ggplot(df.sd, aes(x = group, y = sd, fill = group))+
-#     geom_boxplot()
-

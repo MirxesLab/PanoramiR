@@ -1,5 +1,5 @@
 # ----- Path -----
-dir.input        = '/input/data/path'        # absolute path
+dir.input        = '/path/to/input'        # absolute path
 dir.out          = '/output/results/path'    # absolute path
 file.samplesheet = '/input/samplesheet/file' # absolute path
 

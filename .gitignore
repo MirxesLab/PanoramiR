@@ -1,3 +1,9 @@
 
 input_ncRNA/ncRNA 006R 5_Results.xls
 input_ncRNA/ncRNA 005R 4_Results.xls
+input_biofluid/*
+BiofluidPanel.Rmd
+.DS_Store
+.Rhistory
+scripts/.Rhistory
+

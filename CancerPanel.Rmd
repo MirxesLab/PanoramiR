@@ -310,7 +310,17 @@ Hierarchical clustering is performed on the normalized miRNA expression data to 
 
 ### miRNA {.unnumbered}
 ```{r fig.align='center', fig.cap='Clustergram analysis (row-wise scaling)'}
-fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all)
+pheatmap(allmiRNA, 
+         scale = 'row',
+         show_rownames = ifelse(nrow(allmiRNA) > 20, FALSE, TRUE),
+         show_colnames = ifelse(ncol(allmiRNA) > 20, FALSE, TRUE),
+         border_color = ifelse(nrow(allmiRNA) > 20, NA, 'lightgrey'),
+         col = colors.heatmap,
+         annotation_col = df.anno.all,
+         annotation_names_col = FALSE,
+         annotation_colors = color.anno.all,
+         main = "Clustergram analysis for Sample-miRNA")
+
 ```
 
 ### Sample-sample distance {.unnumbered}
