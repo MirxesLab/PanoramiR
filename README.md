@@ -1,4 +1,7 @@
 # Pipeline for Cancer Panel & PanoramiR Panel
+## Note
+Pipeline for biofluid panel have not been tested yet. Please do not use it.
+
 ## Prepare environment
 The pipeline requires certain R packages. Please refer to `resources/installPackage.R` for installation instructions.
 
