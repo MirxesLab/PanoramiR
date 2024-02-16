@@ -464,7 +464,7 @@ if('Comparison 2' %in% comparisons ) {
 ```{r echo = FALSE, message=FALSE, warning=FALSE, fig.cap='Bar plot for Comparison 3', fig.align='center'}
 if('Comparison 3' %in% comparisons ) {
   if (nrow(ls.diff.3$res.filter) != 0) {
-      p.bar.dCt.1 = fun.plot.dCt(ls.diff.3, 'Comparison 3')
+      p.bar.dCt.3 = fun.plot.dCt(ls.diff.3, 'Comparison 3')
       ggplotly(p.bar.dCt.3)
   } else {
     description = 'Waterfall plot is not applicable'
