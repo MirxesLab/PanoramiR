@@ -23,7 +23,7 @@ fun.plot.summary = function(ls.diff, ls.miRNA2gene, ls.GOsum, comp) {
     num.sample = nrow(df.samplesheet)
     
     num.miRNA.noNA = nrow(df.input.data.GlobalNorm)
-    noNAmiRNA      = boxGrob(glue("{num} miRNAs detected in all samples",
+    noNAmiRNA      = boxGrob(glue("{num} miRNAs detected in more than 90% samples",
                                   "sample = {sample}",
                                   num = txtInt(num.miRNA.noNA),
                                   sample = txtInt(num.sample),
@@ -31,7 +31,7 @@ fun.plot.summary = function(ls.diff, ls.miRNA2gene, ls.GOsum, comp) {
     
     num.miRNA.NA = num.miRNA.all - num.miRNA.noNA
     NAmiRNA      = boxGrob(glue("{num} miRNAs",
-                                "are not detected in all samples",
+                                "are not detected in more than 90% samples",
                                 num = txtInt(num.miRNA.NA),
                                 .sep = '\n'))
     
