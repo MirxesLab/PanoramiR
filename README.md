@@ -30,6 +30,8 @@ is.RTsp          = FALSE       # Whether filter samples by spike-in Ct values
 is.basic         = FALSE       # For basic tier, no report generated
 threshold.DE.dCt = 1
 ```
+1. `skip.samplesheet = 0` is how many rows should be skipped when reading the metadata sheet. Skipping the first 33 rows was used because the first 33 rows in a standard sample manifest sheet did not include comparison information. However, many sample manifest sheets cannot meet the standard requirement and require manual modification. The new sample information sheet will not include the first 33 rows in the standard sample manifest. Therefore, no rows need to be skipped, and this parameter should be set as 0.
+2. `threshold.DE.dCt = 1` is the threshold used to select the differential expression miRNAs. miRNA with absolute dCt greater or equal to this threshold and adjusted p-value less than 0.05 will be viewed as differential expressed miRNAs. This threshold could be lower if the sample type is plasma or serum.
 
 ## Run the pipeline `run_pipeline.R`
 1. Change the diretory to the ones where you stored the scripts. 
