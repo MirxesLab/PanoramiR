@@ -300,9 +300,12 @@ pheatmap(sample.dist.matrix,
 ```
 
 ```{r results='hide'}
-png(file.path(dir.out.fig, 'Heatmap_All.png'), width = 1000, height = 800, res = 150)
-    fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all)
-dev.off()
+ggsave(filename = file.path(dir.out.fig, 'Heatmap_All.png'), 
+       plot = fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all), width = 10, height = 8, 
+       device = 'png', dpi = 300, units = 'in')
+# png(file.path(dir.out.fig, 'Heatmap_All.png'), width = 1000, height = 800, res = 150)
+#     fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all)
+# dev.off()
 
 png(file.path(dir.out.fig, 'Heatmap_s2s.png'), width = 1000, height = 800, res = 150)
     pheatmap(sample.dist.matrix,
