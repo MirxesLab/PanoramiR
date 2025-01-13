@@ -31,7 +31,7 @@ fun.plot.summary = function(ls.diff, ls.miRNA2gene, ls.GOsum, comp) {
     
     num.miRNA.NA = num.miRNA.all - num.miRNA.noNA
     NAmiRNA      = boxGrob(glue("{num} miRNAs",
-                                "are not detected in more than 90% samples",
+                                "are detected in less than 90% samples",
                                 num = txtInt(num.miRNA.NA),
                                 .sep = '\n'))
     
