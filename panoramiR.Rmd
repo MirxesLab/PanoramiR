@@ -281,12 +281,12 @@ Hierarchical clustering is performed on the normalized miRNA expression data to 
 
 ### miRNA {.unnumbered}
 ```{r fig.cap='Clustergram analysis (row-wise scaling)'}
-fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all)
+p.hp.all = fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all)
 ```
 
 ### Sample-sample distance {.unnumbered}
 ```{r echo = FALSE, warning= FALSE, message= FALSE, fig.align='center', fig.cap='Sample-to-sample distance'}
-pheatmap(sample.dist.matrix,
+p.hp.s2s = pheatmap(sample.dist.matrix,
                          clustering_distance_row = sample.dist,
                          clustering_distance_col = sample.dist,
                          col = colors.heatmap,
@@ -301,24 +301,29 @@ pheatmap(sample.dist.matrix,
 
 ```{r results='hide'}
 ggsave(filename = file.path(dir.out.fig, 'Heatmap_All.png'), 
-       plot = fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all), width = 10, height = 8, 
+       plot = p.hp.all,
+       width = 10, height = 8, 
+       device = 'png', dpi = 300, units = 'in')
+
+ggsave(filename = file.path(dir.out.fig, 'Heatmap_s2s.png'), 
+       plot = p.hp.s2s, width = 10, height = 8, 
        device = 'png', dpi = 300, units = 'in')
 # png(file.path(dir.out.fig, 'Heatmap_All.png'), width = 1000, height = 800, res = 150)
 #     fun.heatmap(allmiRNA, "Sample-miRNA", df.anno.all, color.anno.all)
 # dev.off()
 
-png(file.path(dir.out.fig, 'Heatmap_s2s.png'), width = 1000, height = 800, res = 150)
-    pheatmap(sample.dist.matrix,
-                         clustering_distance_row = sample.dist,
-                         clustering_distance_col = sample.dist,
-                         col = colors.heatmap,
-                         annotation_colors = color.anno.all,
-                         annotation_col = df.anno.all,
-                         annotation_names_col = FALSE,
-                         show_rownames = ifelse(nrow(sample.dist.matrix) > 20, FALSE, TRUE),
-                         show_colnames = ifelse(nrow(sample.dist.matrix) > 20, FALSE, TRUE),
-                         main = "Euclidean distance of samples")
-dev.off()
+# png(file.path(dir.out.fig, 'Heatmap_s2s.png'), width = 1000, height = 800, res = 150)
+#     pheatmap(sample.dist.matrix,
+#                          clustering_distance_row = sample.dist,
+#                          clustering_distance_col = sample.dist,
+#                          col = colors.heatmap,
+#                          annotation_colors = color.anno.all,
+#                          annotation_col = df.anno.all,
+#                          annotation_names_col = FALSE,
+#                          show_rownames = ifelse(nrow(sample.dist.matrix) > 20, FALSE, TRUE),
+#                          show_colnames = ifelse(nrow(sample.dist.matrix) > 20, FALSE, TRUE),
+#                          main = "Euclidean distance of samples")
+# dev.off()
 ```
 
 # Differential Expression Analysis 
